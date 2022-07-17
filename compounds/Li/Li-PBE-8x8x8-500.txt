@@ -6,9 +6,9 @@
  |___|_|             
 
 User:   gabrielbirnbaum@Gabriels-MacBook-Pro.local
-Date:   Sun Jul 17 09:05:29 2022
+Date:   Sun Jul 17 10:44:57 2022
 Arch:   x86_64
-Pid:    12193
+Pid:    28214
 Python: 3.9.13
 gpaw:   /Users/gabrielbirnbaum/PycharmProjects/nanolithia/venv/lib/python3.9/site-packages/gpaw
 _gpaw:  /Users/gabrielbirnbaum/PycharmProjects/nanolithia/venv/lib/python3.9/site-packages/
@@ -150,7 +150,7 @@ Hamiltonian:
 XC parameters: PBE with 2 nearest neighbor stencil
 
 Memory estimate:
-  Process memory now: 111.32 MiB
+  Process memory now: 108.65 MiB
   Calculator: 10.27 MiB
     Density: 3.36 MiB
       Arrays: 1.59 MiB
@@ -210,17 +210,17 @@ Effective grid spacing dv^(1/3) = 0.1755
 
      iter     time        total  log10-change:
                          energy  eigst   dens
-iter:   1 09:05:30    -3.807684
-iter:   2 09:05:31    -3.806291  -2.06  -1.27
-iter:   3 09:05:32    -3.958711  -2.12  -1.27
-iter:   4 09:05:32    -3.787389  -2.29  -0.97
-iter:   5 09:05:33    -3.787215  -4.35  -2.84
-iter:   6 09:05:34    -3.787173c -5.80  -2.42
-iter:   7 09:05:35    -3.787127c -5.29  -2.77
-iter:   8 09:05:36    -3.787127c -6.77  -3.49
-iter:   9 09:05:36    -3.787127c -8.14c -3.96
-iter:  10 09:05:37    -3.787127c -8.81c -3.90
-iter:  11 09:05:38    -3.787127c -10.63c -4.51c
+iter:   1 10:44:58    -3.807684
+iter:   2 10:44:59    -3.806291  -2.06  -1.27
+iter:   3 10:45:00    -3.958711  -2.12  -1.27
+iter:   4 10:45:01    -3.787389  -2.29  -0.97
+iter:   5 10:45:01    -3.787215  -4.35  -2.84
+iter:   6 10:45:02    -3.787173c -5.80  -2.42
+iter:   7 10:45:03    -3.787127c -5.29  -2.77
+iter:   8 10:45:04    -3.787127c -6.77  -3.49
+iter:   9 10:45:05    -3.787127c -8.14c -3.96
+iter:  10 10:45:06    -3.787127c -8.81c -3.90
+iter:  11 10:45:06    -3.787127c -10.63c -4.51c
 
 Converged after 11 iterations.
 
@@ -377,7 +377,7 @@ Hamiltonian:
 XC parameters: PBE with 2 nearest neighbor stencil
 
 Memory estimate:
-  Process memory now: 162.61 MiB
+  Process memory now: 158.23 MiB
   Calculator: 10.21 MiB
     Density: 3.35 MiB
       Arrays: 1.59 MiB
@@ -437,17 +437,17 @@ Effective grid spacing dv^(1/3) = 0.1750
 
      iter     time        total  log10-change:
                          energy  eigst   dens
-iter:   1 09:05:39    -3.810140
-iter:   2 09:05:40    -3.808633  -2.05  -1.27
-iter:   3 09:05:41    -3.962861  -2.11  -1.27
-iter:   4 09:05:42    -3.789088  -2.29  -0.97
-iter:   5 09:05:43    -3.788873  -4.29  -2.93
-iter:   6 09:05:44    -3.788829c -5.75  -2.41
-iter:   7 09:05:44    -3.788781c -5.25  -2.76
-iter:   8 09:05:45    -3.788781c -6.72  -3.46
-iter:   9 09:05:46    -3.788781c -8.08c -3.91
-iter:  10 09:05:47    -3.788781c -8.81c -3.87
-iter:  11 09:05:48    -3.788781c -10.69c -4.53c
+iter:   1 10:45:08    -3.810140
+iter:   2 10:45:08    -3.808633  -2.05  -1.27
+iter:   3 10:45:09    -3.962861  -2.11  -1.27
+iter:   4 10:45:10    -3.789088  -2.29  -0.97
+iter:   5 10:45:11    -3.788873  -4.29  -2.93
+iter:   6 10:45:12    -3.788829c -5.75  -2.41
+iter:   7 10:45:13    -3.788781c -5.25  -2.76
+iter:   8 10:45:13    -3.788781c -6.72  -3.46
+iter:   9 10:45:14    -3.788781c -8.08c -3.91
+iter:  10 10:45:15    -3.788781c -8.81c -3.87
+iter:  11 10:45:16    -3.788781c -10.69c -4.53c
 
 Converged after 11 iterations.
 
@@ -604,7 +604,7 @@ Hamiltonian:
 XC parameters: PBE with 2 nearest neighbor stencil
 
 Memory estimate:
-  Process memory now: 180.76 MiB
+  Process memory now: 173.89 MiB
   Calculator: 8.92 MiB
     Density: 2.70 MiB
       Arrays: 1.16 MiB
@@ -664,16 +664,16 @@ Effective grid spacing dv^(1/3) = 0.1910
 
      iter     time        total  log10-change:
                          energy  eigst   dens
-iter:   1 09:05:49    -3.820012
-iter:   2 09:05:50    -3.817721  -2.00  -1.26
-iter:   3 09:05:50    -3.983914  -2.45  -1.25
-iter:   4 09:05:51    -3.793669  -2.86  -0.94
-iter:   5 09:05:52    -3.793482  -4.42  -2.66
-iter:   6 09:05:53    -3.793381c -4.97  -2.39
-iter:   7 09:05:53    -3.793373c -5.68  -2.92
-iter:   8 09:05:54    -3.793373c -7.15  -3.90
-iter:   9 09:05:55    -3.793373c -8.02c -3.75
-iter:  10 09:05:56    -3.793373c -9.47c -4.76c
+iter:   1 10:45:17    -3.820012
+iter:   2 10:45:18    -3.817721  -2.00  -1.26
+iter:   3 10:45:19    -3.983914  -2.45  -1.25
+iter:   4 10:45:19    -3.793669  -2.86  -0.94
+iter:   5 10:45:20    -3.793482  -4.42  -2.66
+iter:   6 10:45:21    -3.793381c -4.97  -2.39
+iter:   7 10:45:22    -3.793373c -5.68  -2.92
+iter:   8 10:45:23    -3.793373c -7.15  -3.90
+iter:   9 10:45:24    -3.793373c -8.02c -3.75
+iter:  10 10:45:24    -3.793373c -9.47c -4.76c
 
 Converged after 10 iterations.
 
@@ -830,7 +830,7 @@ Hamiltonian:
 XC parameters: PBE with 2 nearest neighbor stencil
 
 Memory estimate:
-  Process memory now: 187.39 MiB
+  Process memory now: 186.18 MiB
   Calculator: 8.93 MiB
     Density: 2.70 MiB
       Arrays: 1.16 MiB
@@ -890,14 +890,14 @@ Effective grid spacing dv^(1/3) = 0.1912
 
      iter     time        total  log10-change:
                          energy  eigst   dens
-iter:   1 09:05:57    -3.819730
-iter:   2 09:05:58    -3.817472  -2.00  -1.26
-iter:   3 09:05:59    -3.977838  -2.61  -1.25
-iter:   4 09:05:59    -3.793622  -3.02  -0.93
-iter:   5 09:06:00    -3.793471  -4.82  -2.56
-iter:   6 09:06:01    -3.793373c -4.92  -2.38
-iter:   7 09:06:02    -3.793373c -6.36  -3.34
-iter:   8 09:06:03    -3.793373c -7.86c -4.16c
+iter:   1 10:45:26    -3.819730
+iter:   2 10:45:27    -3.817472  -2.00  -1.26
+iter:   3 10:45:28    -3.977838  -2.61  -1.25
+iter:   4 10:45:28    -3.793622  -3.02  -0.93
+iter:   5 10:45:29    -3.793471  -4.82  -2.56
+iter:   6 10:45:30    -3.793373c -4.92  -2.38
+iter:   7 10:45:31    -3.793373c -6.36  -3.34
+iter:   8 10:45:32    -3.793373c -7.86c -4.16c
 
 Converged after 8 iterations.
 
@@ -929,3 +929,74 @@ Showing only first 2 kpts
 Fermi level: 0.32975
 
 No gap
+Stress tensor:
+     0.000006    -0.000000     0.000000
+    -0.000000     0.000006     0.000000
+     0.000000     0.000000     0.000006
+Timing:                              incl.     excl.
+-----------------------------------------------------------
+Hamiltonian:                         0.210     0.003   0.0% |
+ Atomic:                             0.136     0.002   0.0% |
+  XC Correction:                     0.135     0.135   0.0% |
+ Calculate atomic Hamiltonians:      0.008     0.008   0.0% |
+ Communicate:                        0.000     0.000   0.0% |
+ Initialize Hamiltonian:             0.000     0.000   0.0% |
+ Poisson:                            0.001     0.001   0.0% |
+ XC 3D grid:                         0.061     0.061   0.0% |
+LCAO initialization:                 1.209     0.041   0.0% |
+ LCAO eigensolver:                   0.265     0.002   0.0% |
+  Calculate projections:             0.001     0.001   0.0% |
+  DenseAtomicCorrection:             0.004     0.004   0.0% |
+  Distribute overlap matrix:         0.001     0.001   0.0% |
+  Orbital Layouts:                   0.007     0.007   0.0% |
+  Potential matrix:                  0.239     0.239   0.0% |
+  Sum over cells:                    0.012     0.012   0.0% |
+ LCAO to grid:                       0.570     0.570   0.0% |
+ Set positions (LCAO WFS):           0.333     0.053   0.0% |
+  Basic WFS set positions:           0.008     0.008   0.0% |
+  Basis functions set positions:     0.000     0.000   0.0% |
+  P tci:                             0.086     0.086   0.0% |
+  ST tci:                            0.148     0.148   0.0% |
+  mktci:                             0.039     0.039   0.0% |
+PWDescriptor:                        0.016     0.016   0.0% |
+SCF-cycle:                          31.875     0.114   0.0% |
+ Davidson:                          26.883     1.276   0.1% |
+  Apply H:                           5.688     5.607   0.5% |
+   HMM T:                            0.081     0.081   0.0% |
+  Subspace diag:                     6.338     0.039   0.0% |
+   calc_h_matrix:                    6.099     0.154   0.0% |
+    Apply H:                         5.945     5.860   0.5% |
+     HMM T:                          0.085     0.085   0.0% |
+   diagonalize:                      0.094     0.094   0.0% |
+   rotate_psi:                       0.106     0.106   0.0% |
+  calc. matrices:                   13.023     1.187   0.1% |
+   Apply H:                         11.835    11.674   1.0% |
+    HMM T:                           0.161     0.161   0.0% |
+  diagonalize:                       0.385     0.385   0.0% |
+  rotate_psi:                        0.173     0.173   0.0% |
+ Density:                            3.130     0.000   0.0% |
+  Atomic density matrices:           0.040     0.040   0.0% |
+  Mix:                               0.155     0.155   0.0% |
+  Multipole moments:                 0.003     0.003   0.0% |
+  Pseudo density:                    2.932     2.664   0.2% |
+   Symmetrize density:               0.267     0.267   0.0% |
+ Hamiltonian:                        1.711     0.023   0.0% |
+  Atomic:                            1.147     0.014   0.0% |
+   XC Correction:                    1.132     1.132   0.1% |
+  Calculate atomic Hamiltonians:     0.058     0.058   0.0% |
+  Communicate:                       0.000     0.000   0.0% |
+  Poisson:                           0.012     0.012   0.0% |
+  XC 3D grid:                        0.471     0.471   0.0% |
+ Orthonormalize:                     0.038     0.004   0.0% |
+  calc_s_matrix:                     0.012     0.012   0.0% |
+  inverse-cholesky:                  0.004     0.004   0.0% |
+  projections:                       0.013     0.013   0.0% |
+  rotate_psi_s:                      0.005     0.005   0.0% |
+Set symmetry:                        0.116     0.116   0.0% |
+Stress:                              0.817     0.000   0.0% |
+ Stress tensor:                      0.817     0.817   0.1% |
+Other:                            1168.104  1168.104  97.2% |--------------------------------------|
+-----------------------------------------------------------
+Total:                                      1202.348 100.0%
+
+Date: Sun Jul 17 11:05:00 2022

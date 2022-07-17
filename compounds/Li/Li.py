@@ -1,8 +1,5 @@
 import pathlib
-from os.path import exists
-from ase import Atoms
-from ase.io import read, write
-from ase.parallel import paropen
+
 from gpaw import GPAW, FermiDirac, PW
 from ase.optimize import QuasiNewton
 from ase.build import bulk

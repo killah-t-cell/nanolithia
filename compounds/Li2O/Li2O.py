@@ -46,6 +46,9 @@ def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20):
 
         Li2O.calc = calc
 
+        # get potential energy
+        Li2O.get_potential_energy()
+
         # save
         del db[id]
         db.write(Li2O, name=name, xc=xc, nkpts=nkpts, ecut=ecut, relaxed=True, converged=False, convergence_tol='null')

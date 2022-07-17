@@ -9,6 +9,7 @@ from compounds.Li2O.Li2O import get_Li2O
 from compounds.Li2O2.Li2O2 import get_Li2O2
 from compounds.LiO2.LiO2 import get_LiO2
 
+from matplotlib import pyplot as plt
 
 def converge(db, xc, tol=1e-4, k_range=range(4, 18), ecut_range=range(350, 801, 50), *args):
     """
@@ -22,13 +23,35 @@ def converge(db, xc, tol=1e-4, k_range=range(4, 18), ecut_range=range(350, 801, 
         # converge
         id = db.reserve(name=arg.name, converged=False)
         if id is not None:  # skip calculation if already done
+            ecut_convergence = {}
+            nkpts_convergence = {}
             for k in k_range:
-                arg(db, xc, nkpts=k)
+                atom = arg(db, xc, nkpts=k)
+                e = atom.get_potential_energy()
+                ecut_convergence[ecut] = e
                 # store converged tol
-                # update nkpts for arg in db
             for ecut in ecut_range:
                 arg(db, xc, ecut=ecut)
-                # update ecut for arg in db
+
+            # plot results
+            ecut_lists = sorted(ecut_convergence.items())  # sorted by key, return a list of tuples
+            nkpts_lists = sorted(nkpts_convergence.items())  # sorted by key, return a list of tuples
+            ecut_list, ecut_e_list = zip(*ecut_lists)  # unpack a list of pairs into two tuples
+            nkpts_list, nkpts_e_list = zip(*nkpts_lists)  # unpack a list of pairs into two tuples
+
+            plt.plot(ecut_list, ecut_e_list)
+            plt.plot(nkpts_list, nkpts_e_list)
+
+            # save results
+            # update nkpts for arg in db
+            # update ecut for arg in db
+            # update tol for arg in db
+            # if tol is not achieved, warn and save in db as not converged to tol, but update tol
+
+            # save in plots folder with proper names
+            plt.show()
+        else:
+            print(arg, "is already converged")
 
 
 # Press the green button in the gutter to run the script.
@@ -45,5 +68,3 @@ if __name__ == '__main__':
     # load voltages
     # if not there
     # run voltage experiments
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
