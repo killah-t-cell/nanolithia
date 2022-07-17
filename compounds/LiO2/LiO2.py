@@ -4,21 +4,51 @@ from ase.io import read, write
 from gpaw import GPAW, PW
 from ase.calculators.dftd3 import DFTD3
 
-def get_LiO2(xc, kpts=(8,8,8), Ecut=500):
-    LiO2 = read(pathlib.Path(__file__).parent / 'LiO2.poscar')
 
-    if xc == 'DFTD3':
-        dft = GPAW(mode=PW(Ecut),
-                   kpts=kpts,
-                   txt=pathlib.Path(__file__).parent / f'LiO2-{xc}.log',
-                   xc='PBE')
-        calc = DFTD3(dft=dft, xc='PBE')
+def get_LiO2(db, xc, nkpts=8, ecut=500):
+    """Define a LiO2 crystal and save it to the database, if it hasn't already been saved
+
+        db: Database
+            Database for collecting results.
+        xc: Exchange correlation functional
+            Functional to be used for calculations
+        kpts: int
+            Use a (kpts * kpts * kpts) Monkhorst-Pack grid.
+        ecut: float
+            Cutoff energy for plane waves.
+
+    Returns LiO2 crystal (which is mostly an unstable crystal).
+    """
+    name = f'LiO2-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
+    U_correction = {'O': ':d,0.33'}
+
+    parameters = dict(mode=PW(ecut),
+                      kpts={'size': (nkpts, nkpts, nkpts)},
+                      setups=U_correction,
+                      xc='PBE')
+
+    id = db.reserve(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
+    if id is not None:  # skip calculation if already done
+        # load crystal
+        LiO2 = read(pathlib.Path(__file__).parent / 'LiO2.poscar')
+
+        # attach calculator
+        if xc == 'DFTD3':
+            dft = GPAW(mode=PW(ecut),
+                       kpts=nkpts,
+                       txt=name + '.txt',
+                       setups=U_correction,
+                       xc='PBE')
+            calc = DFTD3(dft=dft, xc='PBE')
+        else:
+            calc = GPAW(txt=name + '.txt',
+                        **parameters)
+
+        LiO2.calc = calc
+
+        # save
+        del db[id]
+        db.write(LiO2, name=name, xc=xc, nkpts=nkpts, ecut=ecut, relaxed=True, converged=False, convergence_tol='null')
+        return LiO2
     else:
-        calc = GPAW(mode=PW(Ecut),
-                    kpts=kpts,
-                    txt=pathlib.Path(__file__).parent / f'LiO2-{xc}.log',
-                    xc=xc)
-
-    LiO2.calc = calc
-    write(pathlib.Path(__file__).parent / f'LiO2-{xc}.traj', LiO2)
-    return LiO2
+        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)

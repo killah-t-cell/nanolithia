@@ -10,13 +10,13 @@ tol = 1e-4
 # Li (-1.9 eV / atom)
 Li_ecut = get_ecut_convergence(get_Li, xc, tol=tol)
 Li_kpts = get_kpts_convergence(get_Li, xc, tol=tol)
-Li = get_Li(xc, Ecut=Li_ecut, kpts=(Li_kpts, Li_kpts, Li_kpts))
+Li = get_Li(xc, ecut=Li_ecut, nkpts=(Li_kpts, Li_kpts, Li_kpts))
 print(Li.get_potential_energy() / len(Li)) # -1.9166736223308312
 
 # Li2O (-4.771 eV / atom)
 Li2O_ecut = get_ecut_convergence(get_Li2O, xc, tol=tol)
 Li2O_kpts = get_kpts_convergence(get_Li2O, xc, tol=tol)
-Li2O = get_Li2O('PBE', Ecut=Li2O_ecut, kpts=(Li2O_kpts, Li2O_kpts, Li2O_kpts))
+Li2O = get_Li2O('PBE', ecut=Li2O_ecut, nkpts=(Li2O_kpts, Li2O_kpts, Li2O_kpts))
 print(Li2O.get_potential_energy() / len(Li2O))
 
 # These correction terms thus obtained are 1.05 eV/O2, 0.76 eV/O22−, and 0.33 eV/O2− for oxides, peroxides,

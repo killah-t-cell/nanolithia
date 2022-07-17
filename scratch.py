@@ -13,7 +13,7 @@ v1 = - (2*epot_Li2O - epot_Li2O2 - 2*epot_Li)/2
 Li = get_Li('PBE')
 print(Li.get_potential_energy()/2)
 
-Li2O = get_Li2O('PBE', Ecut=600, kpts=(16,16,16))
+Li2O = get_Li2O('PBE', ecut=600, nkpts=(16, 16, 16))
 print(Li2O.get_potential_energy()/12)
 
 

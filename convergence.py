@@ -37,5 +37,5 @@ def get_kpts_convergence(atoms, xc, tol=1e-2, ecut=500):
     return k_list[next(i for i in range(1, len(lists)) if lists[i][1] - lists[i + 1][1] < tol)]
 
 
-Li2O = get_Li2O('PBE', Ecut=800, kpts=(12, 12, 12))
+Li2O = get_Li2O('PBE', ecut=800, nkpts=(12, 12, 12))
 Li2O.get_potential_energy() / 12
