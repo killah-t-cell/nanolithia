@@ -60,7 +60,14 @@ def get_Li(db, xc, nkpts=8, ecut=500, nbands=-10):
 
         # save
         del db[id]
-        db.write(Li, name=name, xc=xc, nkpts=nkpts, ecut=ecut, relaxed=True, converged=False, convergence_tol='null')
+        db.write(Li,
+                 name=name,
+                 xc=xc,
+                 nkpts=nkpts,
+                 ecut=ecut,
+                 relaxed=True,
+                 converged=False,
+                 convergence_tol='null')
         return Li
     else:
         return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)

@@ -50,7 +50,14 @@ def get_Li2O2(db, xc, nkpts=8, ecut=500):
 
         # save
         del db[id]
-        db.write(Li2O2, name=name, xc=xc, nkpts=nkpts, ecut=ecut, relaxed=True, converged=False, convergence_tol='null')
+        db.write(Li2O2,
+                 name=name,
+                 xc=xc,
+                 nkpts=nkpts,
+                 ecut=ecut,
+                 relaxed=True,
+                 converged=False,
+                 convergence_tol='null')
         return Li2O2
     else:
         return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
