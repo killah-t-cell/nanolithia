@@ -1,41 +1,65 @@
 from ase.build import bulk
-from gpaw import GPAW, PW
+
 from matplotlib import pyplot as plt
-from compounds.Li2O.Li2O import get_Li2O
+import matplotlib as mpl
 
 
-# This function takes an atom call function and tries to converge it wrt to ecut or kpts
-# it outputs the converged k and ecut based on a given tol
-# and prints/saves the plt as a side effect
-def get_ecut_convergence(atoms, xc, tol=1e-2, k=8, ecut_max=800):
-    ecut_convergence = {}
-    for ecut in range(100, ecut_max, 50):
-        atom = atoms(xc, Ecut=ecut, kpts=(k, k, k))
-        e = atom.get_potential_energy()
-        ecut_convergence[ecut] = e
+def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 18), ecut_range=range(350, 801, 50)):
+    """
+    :param db:
+    :param xc:
+    :param tol:
+    :param k_range:
+    :param ecut_range:
+    :param atoms: list of get_compound functions
+    :return:
+    """
+    for atom in atoms:
+        formula = atom.__name__.replace('get_', '')
+        ecut_convergence = {}
+        nkpts_convergence = {}
+        for k in k_range:
+            at = atom(db, xc, nkpts=k)
+            e = at.get_potential_energy()
+            nkpts_convergence[k] = e
+            # store converged tol
+        for ecut in ecut_range:
+            at = atom(db, xc, ecut=ecut)
+            e = at.get_potential_energy()
+            ecut_convergence[ecut] = e
 
-    lists = sorted(ecut_convergence.items())  # sorted by key, return a list of tuples
-    ecut_list, e_list = zip(*lists)  # unpack a list of pairs into two tuples
-    plt.plot(ecut_list, e_list)
-    plt.show()
+        # process results
+        ecut_lists = sorted(ecut_convergence.items())  # sorted by key, return a list of tuples
+        nkpts_lists = sorted(nkpts_convergence.items())  # sorted by key, return a list of tuples
+        ecut_list, ecut_e_list = zip(*ecut_lists)  # unpack a list of pairs into two tuples
+        nkpts_list, nkpts_e_list = zip(*nkpts_lists)  # unpack a list of pairs into two tuples
+        ecut_converged = next(
+            (i for i, j, _i, _j in zip(ecut_list, ecut_list[1:], ecut_e_list, ecut_e_list[1:]) if _i - _j <= abs(tol)),
+            ecut_list[-1])
+        nkpts_converged = next(
+            (i for i, j, _i, _j in zip(nkpts_list, nkpts_list[1:], nkpts_e_list, nkpts_e_list[1:]) if
+             _i - _j <= abs(tol)),
+            nkpts_list[-1])
 
-    return ecut_list[next((i for i in range(1, len(lists)) if lists[i][1] - lists[i + 1][1] < tol), lists[-1])]
+        # TODO if tol is not achieved, warn and save in db as not converged to tol, but update tol
 
+        # write converged result into db
+        atom(db, xc, nkpts=nkpts_converged, ecut=ecut_converged, converged=True, tol=tol)
 
-def get_kpts_convergence(atoms, xc, tol=1e-2, ecut=500):
-    k_convergence = {}
-    for k in [4, 8, 12, 16, 20, 24]:
-        atom = atoms(xc, Ecut=ecut, kpts=(k, k, k))
-        e = atom.get_potential_energy()
-        k_convergence[k] = e
+        # plot results
+        mpl.rcParams['figure.dpi'] = 300  # increase plot dpi
+        fig, (ax_ecut, ax_nkpts) = plt.subplots(2)
+        fig.suptitle(f'{formula} {xc} convergence study')
 
-    lists = sorted(k_convergence.items())  # sorted by key, return a list of tuples
-    k_list, e_list = zip(*lists)  # unpack a list of pairs into two tuples
-    plt.plot(k_list, e_list)
-    plt.show()
+        ax_ecut.ticklabel_format(useOffset=False)
+        ax_ecut.plot(ecut_list, ecut_e_list)
+        ax_ecut.plot(ecut_converged, ecut_convergence[ecut_converged], 'o')
+        ax_ecut.set(xlabel='Ecut (eV)', ylabel='Potential energy (eV)')
 
-    return k_list[next(i for i in range(1, len(lists)) if lists[i][1] - lists[i + 1][1] < tol)]
+        ax_nkpts.plot(nkpts_list, nkpts_e_list)
+        ax_nkpts.plot(nkpts_converged, nkpts_convergence[nkpts_converged], 'o')
+        ax_nkpts.set(xlabel='k-points', ylabel='Potential energy (eV)')
 
-
-Li2O = get_Li2O('PBE', ecut=800, nkpts=(12, 12, 12))
-Li2O.get_potential_energy() / 12
+        plt.tight_layout()
+        plt.savefig(f'plots/{formula}-{xc}-convergence.png')
+        plt.show()
