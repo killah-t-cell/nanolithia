@@ -4,7 +4,7 @@ from gpaw import GPAW, PW
 from ase.calculators.dftd3 import DFTD3
 
 
-def get_Li2O2(db, xc, nkpts=8, ecut=500):
+def get_Li2O2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
     """Define a Li2O2 crystal and save it to the database, if it hasn't already been saved
 
         db: Database
@@ -56,8 +56,8 @@ def get_Li2O2(db, xc, nkpts=8, ecut=500):
                  nkpts=nkpts,
                  ecut=ecut,
                  relaxed=True,
-                 converged=False,
-                 convergence_tol='null')
+                 converged=converged,
+                 tol=tol)
         return Li2O2
     else:
         return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)

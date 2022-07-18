@@ -13,71 +13,64 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 
 
-def converge(db, xc, *atom_rows, tol=1e-4, k_range=range(4, 18), ecut_range=range(350, 801, 50)):
+def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 18), ecut_range=range(350, 801, 50)):
     """
     :param db:
     :param xc:
     :param tol:
     :param k_range:
     :param ecut_range:
-    :param atom_rows:
+    :param atoms: list of get_compound functions
     :return:
     """
-    for row, callback in atom_rows:
-        id = db.reserve(name=row.name, converged=True)
-        if id is not None:  # skip convergence if already done
-            ecut_convergence = {}
-            nkpts_convergence = {}
-            for k in k_range:
-                atom = callback(db, xc, nkpts=k)
-                e = atom.get_potential_energy()
-                nkpts_convergence[k] = e
-                # store converged tol
-            for ecut in ecut_range:
-                atom = callback(db, xc, ecut=ecut)
-                e = atom.get_potential_energy()
-                ecut_convergence[ecut] = e
+    for atom in atoms:
+        formula = atom.__name__.replace('get_', '')
+        ecut_convergence = {}
+        nkpts_convergence = {}
+        for k in k_range:
+            at = atom(db, xc, nkpts=k)
+            e = at.get_potential_energy()
+            nkpts_convergence[k] = e
+            # store converged tol
+        for ecut in ecut_range:
+            at = atom(db, xc, ecut=ecut)
+            e = at.get_potential_energy()
+            ecut_convergence[ecut] = e
 
-            # process results
-            ecut_lists = sorted(ecut_convergence.items())  # sorted by key, return a list of tuples
-            nkpts_lists = sorted(nkpts_convergence.items())  # sorted by key, return a list of tuples
-            ecut_list, ecut_e_list = zip(*ecut_lists)  # unpack a list of pairs into two tuples
-            nkpts_list, nkpts_e_list = zip(*nkpts_lists)  # unpack a list of pairs into two tuples
+        # process results
+        ecut_lists = sorted(ecut_convergence.items())  # sorted by key, return a list of tuples
+        nkpts_lists = sorted(nkpts_convergence.items())  # sorted by key, return a list of tuples
+        ecut_list, ecut_e_list = zip(*ecut_lists)  # unpack a list of pairs into two tuples
+        nkpts_list, nkpts_e_list = zip(*nkpts_lists)  # unpack a list of pairs into two tuples
+        ecut_converged = next(
+            (i for i, j, _i, _j in zip(ecut_list, ecut_list[1:], ecut_e_list, ecut_e_list[1:]) if _i - _j <= abs(tol)), ecut_list[-1])
+        nkpts_converged = next(
+            (i for i, j, _i, _j in zip(nkpts_list, nkpts_list[1:], nkpts_e_list, nkpts_e_list[1:]) if _i - _j <= abs(tol)),
+            nkpts_list[-1])
 
-            # save results
-            ecut_converged = next(
-                (i for i in range(1, len(ecut_lists)) if ecut_lists[i][1] - ecut_lists[i + 1][1] <= tol),
-                ecut_lists[-1])
-            nkpts_converged = next(
-                (i for i in range(1, len(nkpts_lists)) if nkpts_lists[i][1] - nkpts_lists[i + 1][1] <= tol),
-                nkpts_lists[-1])
 
-            # TODO if tol is not achieved, warn and save in db as not converged to tol, but update tol
+        # TODO if tol is not achieved, warn and save in db as not converged to tol, but update tol
 
-            # update db
-            db.update(row.id,
-                      nkpts=nkpts_converged,
-                      ecut=ecut_converged,
-                      converged=True,
-                      convergence_tol=tol,
-                      atoms=callback(db, xc, nkpts=nkpts_converged, ecut=ecut_converged))
+        # write converged result into db
+        atom(db, xc, nkpts=nkpts_converged, ecut=ecut_converged, converged=True, tol=tol)
 
-            # plot results
-            mpl.rcParams['figure.dpi'] = 300  # increase plot dpi
-            fig, (ax_ecut, ax_nkpts) = plt.subplots(2, 1)
-            ax_ecut.plot(ecut_list, ecut_e_list, 'r')
-            ax_ecut.set(xlabel='Ecut (eV)', ylabel='Potential energy (eV)')
-            ax_ecut.set_title(f'{row.formula}-{xc}-ecut')
+        # plot results
+        mpl.rcParams['figure.dpi'] = 300  # increase plot dpi
+        fig, (ax_ecut, ax_nkpts) = plt.subplots(2)
+        fig.suptitle(f'{formula} {xc} convergence study')
 
-            ax_nkpts.plot(nkpts_list, nkpts_e_list, 'r')
-            ax_nkpts.set(xlabel='k-points', ylabel='Potential energy (eV)')
-            ax_nkpts.set_title(f'{row.formula}-{xc}-nkpts')
+        ax_ecut.ticklabel_format(useOffset=False)
+        ax_ecut.plot(ecut_list, ecut_e_list)
+        ax_ecut.plot(ecut_converged, ecut_convergence[ecut_converged], 'o')
+        ax_ecut.set(xlabel='Ecut (eV)', ylabel='Potential energy (eV)')
 
-            plt.show()
-            ax_ecut.savefig(f'plots/{row.formula}-{row.xc}-ecut-convergence.png')
-            ax_nkpts.savefig(f'plots/{row.formula}-{row.xc}-kpts-convergence.png')
-        else:
-            print(row, "is already converged")
+        ax_nkpts.plot(nkpts_list, nkpts_e_list)
+        ax_nkpts.plot(nkpts_converged, nkpts_convergence[nkpts_converged], 'o')
+        ax_nkpts.set(xlabel='k-points', ylabel='Potential energy (eV)')
+
+        plt.tight_layout()
+        plt.savefig(f'plots/{formula}-{xc}-convergence.png')
+        plt.show()
 
 
 if __name__ == '__main__':
@@ -88,14 +81,10 @@ if __name__ == '__main__':
     Li2O2 = get_Li2O2(db, xc)
     LiO2 = get_LiO2(db, xc)
 
-    # del db[db.get(name=f'Li-{xc}-8x8x8-500', converged=True).id]
-    compounds_to_converge = ((db.get(name=f'Li-{xc}-8x8x8-500'), get_Li),
-                             (db.get(name=f'Li2O-{xc}-8x8x8-500'), get_Li2O),
-                             (db.get(name=f'LiO2-{xc}-8x8x8-500'), get_LiO2),
-                             (db.get(name=f'Li2O2-{xc}-8x8x8-500'), get_Li2O2))
-
+    compounds_to_converge = (get_Li,)
     converge(db, xc, *compounds_to_converge)
 
     # load voltages
     # if not there
     # run voltage experiments
+    # del db[db.get(name=f'Li-{xc}-8x8x8-500', converged=True).id]

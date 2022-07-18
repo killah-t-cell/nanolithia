@@ -10,7 +10,7 @@ import ase.db
 from gpaw.xc.bee import BEEFEnsemble
 
 
-def get_Li(db, xc, nkpts=8, ecut=500, nbands=-10):
+def get_Li(db, xc, nkpts=8, ecut=500, nbands=-10, converged=False, tol='null'):
     """Define a lithium crystal and save it to the database, if it hasn't already been saved
 
         db: Database
@@ -66,8 +66,8 @@ def get_Li(db, xc, nkpts=8, ecut=500, nbands=-10):
                  nkpts=nkpts,
                  ecut=ecut,
                  relaxed=True,
-                 converged=False,
-                 convergence_tol='null')
+                 converged=converged,
+                 tol=tol)
         return Li
     else:
         return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)

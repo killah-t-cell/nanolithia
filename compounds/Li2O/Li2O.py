@@ -4,7 +4,7 @@ from gpaw import GPAW, FermiDirac, PW
 from ase.calculators.dftd3 import DFTD3
 
 
-def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20):
+def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20, converged=False, tol='null'):
     """Define a Li2O crystal and save it to the database, if it hasn't already been saved
 
         db: Database
@@ -57,8 +57,8 @@ def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20):
                  nkpts=nkpts,
                  ecut=ecut,
                  relaxed=True,
-                 converged=False,
-                 convergence_tol='null')
+                 converged=converged,
+                 tol=tol)
         return Li2O
     else:
         return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
