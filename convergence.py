@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 
 
-def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 18), ecut_range=range(350, 801, 50)):
+def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 12), ecut_range=range(350, 901, 50)):
     """
     :param db:
     :param xc:
@@ -63,3 +63,5 @@ def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 18), ecut_range=range(35
         plt.tight_layout()
         plt.savefig(f'plots/{formula}-{xc}-convergence.png')
         plt.show()
+
+        return ecut_converged, nkpts_converged

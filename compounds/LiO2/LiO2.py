@@ -20,7 +20,7 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
     Returns LiO2 crystal (which is mostly an unstable crystal).
     """
     name = f'LiO2-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
-    U_correction = {'O': ':d,0.33'}
+    U_correction = {'O': ':p,0.33'}
 
     parameters = dict(mode=PW(ecut),
                       kpts={'size': (nkpts, nkpts, nkpts)},
