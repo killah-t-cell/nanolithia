@@ -4,7 +4,7 @@ from gpaw import GPAW, PW
 from ase.calculators.dftd3 import DFTD3
 
 
-def get_Li2O2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
+def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null'):
     """Define a Li2O2 crystal and save it to the database, if it hasn't already been saved
 
         db: Database
@@ -19,7 +19,7 @@ def get_Li2O2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
     Returns Li202 crystal.
     """
     name = f'Li2O2-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
-    U_correction = {'O': ':p,0.76'}
+    U_correction = {'O': ':p,0.76,0'}
 
     parameters = dict(mode=PW(ecut),
                       kpts={'size': (nkpts, nkpts, nkpts)},
@@ -62,32 +62,25 @@ def get_Li2O2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
     else:
         return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
 
-# nkpts=8
-# ecut=500
-# U_correction = {'O': ':p,0.76'}
-# # U_correction = {'Li': ':d,0.76'}
-# parameters = dict(mode=PW(ecut),kpts={'size': (nkpts, nkpts, nkpts)}, setups=U_correction, xc='PBE')
-# Li2O2 = read(pathlib.Path(__file__).parent / 'Li2O2.poscar')
-# calc = GPAW(**parameters)
-# Li2O2.calc = calc
-# # get potential energy
-# e = Li2O2.get_potential_energy()
-# e
-# # goal
-# # -36.972
-#
-# # LDA, with U correction
-# # -41.700487
-#
-# # LDA without U correction
-# # -41.70544355635925
-#
-# # LDA without U correction, unnormalized
-# # -41.70544355635925
-#
-# # PBE with U correction {'O': ':p,0.76'} k=8, ecut=500
-# # -36.4
-#
-# # PBE with U correction {'O': ':p,0.76'} k=8, ecut=600
-#
-# # PBE without U correction, k=8, ecut=600
+# goal -36.972
+#550, 8, unnormalized, -36.7
+#575, 8, unnormalized, -37.0
+#600, 8, unnormalized, -37.18
+#800, 8, unnormalized, -37.4
+
+
+# LDA, with U correction
+# -41.700487
+
+# LDA without U correction
+# -41.70544355635925
+
+# LDA without U correction, unnormalized
+# -41.70544355635925
+
+# PBE with U correction {'O': ':p,0.76'} k=8, ecut=500
+# -36.4
+
+# PBE with U correction {'O': ':p,0.76'} k=8, ecut=600
+
+# PBE without U correction, k=8, ecut=600

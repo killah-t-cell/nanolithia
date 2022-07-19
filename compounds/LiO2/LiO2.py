@@ -20,7 +20,8 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
     Returns LiO2 crystal (which is mostly an unstable crystal).
     """
     name = f'LiO2-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
-    U_correction = {'O': ':p,0.33'}
+    U_correction = {'O': ':p,0.33,0'} # the original paper has this at {'O': ':p,0.33,0'} for superoxides.
+                                      # 0.76 with ecut=575 works too
 
     parameters = dict(mode=PW(ecut),
                       kpts={'size': (nkpts, nkpts, nkpts)},
@@ -62,3 +63,30 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
         return LiO2
     else:
         return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
+
+
+# nkpts=8
+# ecut=500
+# U_correction = {'O': ':p,0.33,0'}
+# parameters = dict(mode=PW(ecut),kpts={'size': (nkpts, nkpts, nkpts)}, setups=U_correction, xc='PBE')
+# LiO2 = read(pathlib.Path(__file__).parent / 'LiO2.poscar')
+# calc = GPAW(**parameters)
+# LiO2.calc = calc
+# # get potential energy
+# e = LiO2.get_potential_energy()
+# e
+
+
+# goal -54.744
+# 575, 8, PBE -> -50.25838214237331
+
+# currently running without setups, ecut=900, k=8 -> -53.043477
+
+# goal -13.686
+# new structure, with setups 0.33 -> -14.36
+# new structure, without setups -> -14.8
+# new structure, with setups 0.33,ecut=500 -> -13.67 !!!!!! THIS WORKS !!!!!!
+# new structure, with setups 0.76,ecut=500 -> -13.07
+# new structure, with setups 0.76,ecut=575 -> -13.67 !!!!!! THIS WORKS !!!!!!
+# new structure, with setups 0.76,ecut=600 -> -13.76
+# new structure, with setups 0.76,ecut=700 -> -13.9156691899

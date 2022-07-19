@@ -18,15 +18,14 @@ def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 12), ecut_range=range(35
         formula = atom.__name__.replace('get_', '')
         ecut_convergence = {}
         nkpts_convergence = {}
-        for k in k_range:
-            at = atom(db, xc, nkpts=k)
-            e = at.get_potential_energy()
-            nkpts_convergence[k] = e
-            # store converged tol
         for ecut in ecut_range:
             at = atom(db, xc, ecut=ecut)
             e = at.get_potential_energy()
             ecut_convergence[ecut] = e
+        for k in k_range:
+            at = atom(db, xc, nkpts=k)
+            e = at.get_potential_energy()
+            nkpts_convergence[k] = e
 
         # process results
         ecut_lists = sorted(ecut_convergence.items())  # sorted by key, return a list of tuples
