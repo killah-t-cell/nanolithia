@@ -24,8 +24,12 @@ def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20, converged=False, tol='null'):
 
     parameters = dict(mode=PW(ecut),
                       nbands=nbands,
-                      kpts={'size': (nkpts, nkpts, nkpts)},
-                      xc='PBE')
+                      kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
+                      spinpol=True,
+                      convergence={'eigenstates': 1.0e-4,  # eV^2 / electron
+                                  'energy': 2.0e-4,  # eV / electron
+                                  'density': 1.0e-3, },
+                      xc=xc)
 
     id = db.reserve(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
     if id is not None:  # skip calculation if already done

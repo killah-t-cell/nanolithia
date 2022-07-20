@@ -22,9 +22,14 @@ def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null'):
     U_correction = {'O': ':p,0.76,0'}
 
     parameters = dict(mode=PW(ecut),
-                      kpts={'size': (nkpts, nkpts, nkpts)},
+                      kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
+                      spinpol=True,
+                      convergence={'eigenstates': 1.0e-4,  # eV^2 / electron
+                                  'energy': 2.0e-4,  # eV / electron
+                                  'density': 1.0e-3, },
                       setups=U_correction,
-                      xc='PBE')
+                      xc=xc)
+
 
     id = db.reserve(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
     if id is not None:  # skip calculation if already done

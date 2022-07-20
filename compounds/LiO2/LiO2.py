@@ -24,9 +24,13 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
                                       # 0.76 with ecut=575 works too
 
     parameters = dict(mode=PW(ecut),
-                      kpts={'size': (nkpts, nkpts, nkpts)},
+                      kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
+                      spinpol=True,
+                      convergence={'eigenstates': 1.0e-4,  # eV^2 / electron
+                                  'energy': 2.0e-4,  # eV / electron
+                                  'density': 1.0e-3, },
                       setups=U_correction,
-                      xc='PBE')
+                      xc=xc)
 
     id = db.reserve(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
     if id is not None:  # skip calculation if already done

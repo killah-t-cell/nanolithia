@@ -37,8 +37,12 @@ if __name__ == '__main__':
     print(epot_Li2O2)
     print(epot_LiO2)
 
-
+    # get voltages
     get_eq_voltage(2*epot_Li2O, epot_Li2O2, 2)
     get_eq_voltage(2*epot_Li2O, epot_LiO2, 3)
     # compounds_to_converge = (get_Li2O2, get_LiO2, get_Li, get_Li2O)
     # converge(db, xc, *compounds_to_converge)
+
+    # get convex hull
+    db = ase.db.connect('hull.db')
+
