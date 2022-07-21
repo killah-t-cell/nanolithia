@@ -32,7 +32,7 @@ def get_O2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='mp
     id = db.reserve(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
     if id is not None:  # skip calculation if already done
         # load crystal
-        O2 = read(pathlib.Path(__file__).parent / f'O2.poscar_{structure}')
+        O2 = read(pathlib.Path(__file__).parent / f'O2_{structure}.poscar')
 
         # attach calculator
         if xc == 'DFTD3':
@@ -62,6 +62,5 @@ def get_O2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='mp
                  converged=converged,
                  structure=structure,
                  tol=tol)
-        return O2
-    else:
-        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
+
+    return db.get(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)

@@ -64,9 +64,8 @@ def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null', structure=
                  converged=converged,
                  structure=structure,
                  tol=tol)
-        return Li2O2
-    else:
-        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
+
+    return db.get(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
 
 # goal -36.972
 #550, 8, unnormalized, -36.7

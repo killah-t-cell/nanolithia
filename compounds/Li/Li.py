@@ -73,9 +73,8 @@ def get_Li(db, xc, nkpts=8, ecut=500, nbands=-10, converged=False, tol='null', s
                  converged=converged,
                  structure=structure,
                  tol=tol)
-        return Li
-    else:
-        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
+
+    return db.get(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
 
 
 

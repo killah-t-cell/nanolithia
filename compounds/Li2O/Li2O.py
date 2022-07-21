@@ -64,6 +64,5 @@ def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20, converged=False, tol='null', 
                  converged=converged,
                  structure=structure,
                  tol=tol)
-        return Li2O
-    else:
-        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
+
+    return db.get(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)

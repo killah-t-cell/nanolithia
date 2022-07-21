@@ -4,6 +4,7 @@
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import ase.db
 from ase.calculators.dftd3 import DFTD3
+from ase.phasediagram import PhaseDiagram
 from gpaw import PW, GPAW
 
 from compounds.Li.Li import get_Li
@@ -26,28 +27,29 @@ from voltages.voltages import get_eq_voltage
 # calculate 0K voltage profile
 
 def get_formation_energy(db, xc, compound_epot, x, y):
-    Li = get_Li(db, xc)
+    Li = get_Li(db, xc).toatoms()
     epot_Li_cell = Li.get_potential_energy()
     epot_Li = epot_Li_cell / 2
 
-    O = get_O2(db, xc)
+    O = get_O2(db, xc).toatoms()
     epot_O_cell = O.get_potential_energy()
     epot_O = epot_O_cell / 4
 
-    return compound_epot - (x * epot_Li - y * epot_O)
+    return compound_epot - (x * epot_Li + y * epot_O)
+
 
 if __name__ == '__main__':
     # get compounds
     db = ase.db.connect('compounds.db')
     xc = 'PBE'
 
-    Li = get_Li(db, xc)
-    Li2O = get_Li2O(db, xc)
-    Li2O2 = get_Li2O2(db, xc)
-    LiO2 = get_LiO2(db, xc)
-    LiO3 = get_LiO3(db, xc)
-    LiO8 = get_LiO8(db, xc)
-    O2 = get_O2(db, xc)
+    Li2O = get_Li2O(db, xc).toatoms()
+    Li2O2 = get_Li2O2(db, xc).toatoms()
+    LiO2 = get_LiO2(db, xc).toatoms()
+    LiO3 = get_LiO3(db, xc).toatoms()
+    LiO8 = get_LiO8(db, xc).toatoms()
+    Li = get_Li(db, xc).toatoms()
+    O2 = get_O2(db, xc).toatoms()
 
     # get potential energies
     epot_Li2O_cell = Li2O.get_potential_energy()
@@ -55,7 +57,6 @@ if __name__ == '__main__':
     epot_LiO2_cell = LiO2.get_potential_energy()
     epot_LiO3_cell = LiO3.get_potential_energy()
     epot_LiO8_cell = LiO8.get_potential_energy()
-    epot_Li_cell = Li.get_potential_energy()
 
     # The calculated energies are for the full cells. Convert them to the energy per formula unit.
     epot_Li2O2 = epot_Li2O2_cell / 2  # len is 8, we want to get Li2O2 out of Li4O4, so we divide by 2. 4/8=0.5
@@ -63,10 +64,6 @@ if __name__ == '__main__':
     epot_LiO2 = epot_LiO2_cell / 2
     epot_LiO3 = epot_LiO3_cell / 2
     epot_LiO8 = epot_LiO8_cell / 2
-    epot_Li = epot_Li_cell / 2
-    print(epot_Li2O)
-    print(epot_Li2O2)
-    print(epot_LiO2)
 
     # get voltages
     get_eq_voltage(2 * epot_Li2O, epot_Li2O2, 2)
@@ -74,19 +71,33 @@ if __name__ == '__main__':
     # compounds_to_converge = (get_Li2O2, get_LiO2, get_Li, get_Li2O)
     # converge(db, xc, *compounds_to_converge)
 
-    # get convex hull TODO this is super hacky and brittle, should make it sturdier, but let's get a convex hull first
+    # get convex hull
     efLiO2 = get_formation_energy(db, xc, epot_LiO2, 1, 2)
     efLi2O2 = get_formation_energy(db, xc, epot_Li2O2, 2, 2)
     efLi2O = get_formation_energy(db, xc, epot_Li2O, 2, 1)
     efLiO3 = get_formation_energy(db, xc, epot_LiO3, 1, 3)
     efLiO8 = get_formation_energy(db, xc, epot_LiO8, 1, 8)
 
-    db.update(id=4, formation_energy=efLi2O)
-    db.update(id=6, formation_energy=efLi2O2)
-    db.update(id=8, formation_energy=efLiO2)
-    db.update(id=12, formation_energy=efLiO3)
-    db.update(id=14, formation_energy=efLiO8)
+    print('efLi2O=', efLi2O/3)
+    print('efLi2O2=',efLi2O2/4)
+    print('efLiO2=',efLiO2/3)
+    print('efLiO8=',efLiO8/9)
+    print('O2 e =', O2.get_potential_energy())
 
+    db.update(id=get_Li2O(db, xc).id, formation_energy=efLi2O)
+    db.update(id=get_Li2O2(db, xc).id, formation_energy=efLi2O2)
+    db.update(id=get_LiO2(db, xc).id, formation_energy=efLiO2)
+    db.update(id=get_LiO3(db, xc).id, formation_energy=efLiO3)
+    db.update(id=get_LiO8(db, xc).id, formation_energy=efLiO8)
 
+    refs = [('Li2O', get_Li2O(db, xc).formation_energy),
+            ('Li2O2', get_Li2O2(db, xc).formation_energy),
+            ('LiO2', get_LiO2(db, xc).formation_energy),
+            ('LiO3', get_LiO3(db, xc).formation_energy),
+            ('LiO8', get_LiO8(db, xc).formation_energy),
+            ('Li', 0.0),
+            ('O', 0.0),
+            ]
 
-
+    pd = PhaseDiagram(refs)
+    pd.plot(show=True)

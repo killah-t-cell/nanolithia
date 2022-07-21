@@ -64,6 +64,5 @@ def get_LiO3(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='
                  converged=converged,
                  structure=structure,
                  tol=tol)
-        return LiO3
-    else:
-        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
+
+    return db.get(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
