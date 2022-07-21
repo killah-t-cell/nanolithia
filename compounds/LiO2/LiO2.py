@@ -5,7 +5,7 @@ from gpaw import GPAW, PW
 from ase.calculators.dftd3 import DFTD3
 
 
-def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
+def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='mp-1018789'):
     """Define a LiO2 crystal and save it to the database, if it hasn't already been saved
 
         db: Database
@@ -19,7 +19,7 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
 
     Returns LiO2 crystal (which is mostly an unstable crystal).
     """
-    name = f'LiO2-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
+    name = f'LiO2-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
     U_correction = {'O': ':p,0.33,0'} # the original paper has this at {'O': ':p,0.33,0'} for superoxides.
                                       # 0.76 with ecut=575 works too
 
@@ -35,7 +35,7 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
     id = db.reserve(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
     if id is not None:  # skip calculation if already done
         # load crystal
-        LiO2 = read(pathlib.Path(__file__).parent / 'LiO2.poscar')
+        LiO2 = read(pathlib.Path(__file__).parent / f'LiO2_{structure}.poscar')
 
         # attach calculator
         if xc == 'DFTD3':
@@ -63,17 +63,18 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null'):
                  ecut=ecut,
                  relaxed=True,
                  converged=converged,
+                 structure=structure,
                  tol=tol)
         return LiO2
     else:
-        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
+        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
 
 
 # nkpts=8
 # ecut=500
 # U_correction = {'O': ':p,0.33,0'}
 # parameters = dict(mode=PW(ecut),kpts={'size': (nkpts, nkpts, nkpts)}, setups=U_correction, xc='PBE')
-# LiO2 = read(pathlib.Path(__file__).parent / 'LiO2.poscar')
+# LiO2 = read(pathlib.Path(__file__).parent / 'LiO2_mp-1018789.poscar')
 # calc = GPAW(**parameters)
 # LiO2.calc = calc
 # # get potential energy

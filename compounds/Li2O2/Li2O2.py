@@ -4,7 +4,7 @@ from gpaw import GPAW, PW
 from ase.calculators.dftd3 import DFTD3
 
 
-def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null'):
+def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null', structure='mp-841'):
     """Define a Li2O2 crystal and save it to the database, if it hasn't already been saved
 
         db: Database
@@ -18,7 +18,7 @@ def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null'):
 
     Returns Li202 crystal.
     """
-    name = f'Li2O2-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
+    name = f'Li2O2-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
     U_correction = {'O': ':p,0.76,0'}
 
     parameters = dict(mode=PW(ecut),
@@ -34,7 +34,7 @@ def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null'):
     id = db.reserve(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
     if id is not None:  # skip calculation if already done
         # load crystal
-        Li2O2 = read(pathlib.Path(__file__).parent / 'Li2O2.poscar')
+        Li2O2 = read(pathlib.Path(__file__).parent / f'Li2O2_{structure}.poscar')
 
         # attach calculator
         if xc == 'DFTD3':
@@ -62,10 +62,11 @@ def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null'):
                  ecut=ecut,
                  relaxed=True,
                  converged=converged,
+                 structure=structure,
                  tol=tol)
         return Li2O2
     else:
-        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
+        return db.get_atoms(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
 
 # goal -36.972
 #550, 8, unnormalized, -36.7
