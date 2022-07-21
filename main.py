@@ -3,6 +3,8 @@
 # Press ⌃R to execute it or replace it with your code.
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import ase.db
+from ase.calculators.dftd3 import DFTD3
+from gpaw import PW, GPAW
 
 from compounds.Li.Li import get_Li
 from compounds.Li2O.Li2O import get_Li2O
@@ -38,11 +40,10 @@ if __name__ == '__main__':
     print(epot_LiO2)
 
     # get voltages
-    get_eq_voltage(2*epot_Li2O, epot_Li2O2, 2)
-    get_eq_voltage(2*epot_Li2O, epot_LiO2, 3)
+    get_eq_voltage(2 * epot_Li2O, epot_Li2O2, 2)
+    get_eq_voltage(2 * epot_Li2O, epot_LiO2, 3)
     # compounds_to_converge = (get_Li2O2, get_LiO2, get_Li, get_Li2O)
     # converge(db, xc, *compounds_to_converge)
 
     # get convex hull
-    db = ase.db.connect('hull.db')
-
+    construct_convex(db, 'PBE')
