@@ -18,15 +18,11 @@ def get_O2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='mp
     Returns O2 crystal
     """
     name = f'O2-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
-    U_correction = {'O': ':p,1.05,0'} # because it's an oxide
+    # U_correction = {'O': ':p,0.33,0'}  # because it's an oxide
 
     parameters = dict(mode=PW(ecut),
                       kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
-                      spinpol=True,
-                      convergence={'eigenstates': 1.0e-4,  # eV^2 / electron
-                                   'energy': 2.0e-4,  # eV / electron
-                                   'density': 1.0e-3, },
-                      setups=U_correction,
+                      # setups=U_correction,
                       xc=xc)
 
     id = db.reserve(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
@@ -39,7 +35,7 @@ def get_O2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='mp
             dft = GPAW(mode=PW(ecut),
                        kpts=nkpts,
                        txt=name + '.txt',
-                       setups=U_correction,
+                       # setups=U_correction,
                        xc='PBE')
             calc = DFTD3(dft=dft, xc='PBE')
         else:

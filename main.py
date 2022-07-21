@@ -21,10 +21,9 @@ from compounds.O2.O2 import get_O2
 from convergence import converge
 from voltages.voltages import get_eq_voltage
 
-# get all energies
-# get formation energies
-# construct hull
-# calculate 0K voltage profile
+# TODO
+# get correct formation energies
+# validate 0K voltage profile
 
 def get_formation_energy(db, xc, compound_epot, x, y):
     Li = get_Li(db, xc).toatoms()
@@ -39,6 +38,9 @@ def get_formation_energy(db, xc, compound_epot, x, y):
 
 
 if __name__ == '__main__':
+    # set high quality plotting
+    mpl.rcParams['figure.dpi'] = 300  # increase plot dpi
+
     # get compounds
     db = ase.db.connect('compounds.db')
     xc = 'PBE'
@@ -57,6 +59,8 @@ if __name__ == '__main__':
     epot_LiO2_cell = LiO2.get_potential_energy()
     epot_LiO3_cell = LiO3.get_potential_energy()
     epot_LiO8_cell = LiO8.get_potential_energy()
+    epot_O2_cell = O2.get_potential_energy()
+
 
     # The calculated energies are for the full cells. Convert them to the energy per formula unit.
     epot_Li2O2 = epot_Li2O2_cell / 2  # len is 8, we want to get Li2O2 out of Li4O4, so we divide by 2. 4/8=0.5
@@ -78,12 +82,15 @@ if __name__ == '__main__':
     efLiO3 = get_formation_energy(db, xc, epot_LiO3, 1, 3)
     efLiO8 = get_formation_energy(db, xc, epot_LiO8, 1, 8)
 
-    print('efLi2O=', efLi2O/3)
-    print('efLi2O2=',efLi2O2/4)
-    print('efLiO2=',efLiO2/3)
-    print('efLiO8=',efLiO8/9)
+    # print formation energies
+    print('epot_Li2O=', epot_Li2O / 3)
+    print('efLi2O=', efLi2O / 3)
+    print('efLi2O2=', efLi2O2 / 4)
+    print('efLiO2=', efLiO2 / 3)
+    print('efLiO8=', efLiO8 / 9)
     print('O2 e =', O2.get_potential_energy())
 
+    # save new formation energies to db
     db.update(id=get_Li2O(db, xc).id, formation_energy=efLi2O)
     db.update(id=get_Li2O2(db, xc).id, formation_energy=efLi2O2)
     db.update(id=get_LiO2(db, xc).id, formation_energy=efLiO2)
@@ -100,4 +107,19 @@ if __name__ == '__main__':
             ]
 
     pd = PhaseDiagram(refs)
+    pd.plot()
+    plt.savefig(f'plots/convex-hull-0K.png')
     pd.plot(show=True)
+
+
+    # get voltage profile
+    v_points = [get_eq_voltage(2 * epot_Li2O, epot_Li2O2, 2),
+                get_eq_voltage(epot_Li2O2, epot_LiO2, 1),
+                get_eq_voltage(4 * epot_LiO2, epot_LiO8, 3)]
+    concentrations = (1 / 3, 1 / 2, 2 / 3)
+
+    plt.plot(concentrations,v_points)
+    plt.ylabel('Voltage (V)')
+    plt.xlabel('O')
+    plt.savefig(f'plots/voltage-profile-0K.png')
+    plt.show()
