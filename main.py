@@ -4,8 +4,10 @@
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import ase.db
 from ase.calculators.dftd3 import DFTD3
-from ase.phasediagram import PhaseDiagram
+from ase.phasediagram import PhaseDiagram, Pourbaix
 from gpaw import PW, GPAW
+
+import numpy as np
 
 from compounds.Li.Li import get_Li
 from compounds.Li2O.Li2O import get_Li2O
@@ -106,11 +108,20 @@ if __name__ == '__main__':
             ('O', 0.0),
             ]
 
+    # plot convex hull
     pd = PhaseDiagram(refs)
     pd.plot()
     plt.savefig(f'plots/convex-hull-0K.png')
     pd.plot(show=True)
 
+    # plot phase diagram
+    pb = Pourbaix(refs, Li=1, O=1)
+    U = np.linspace(-5, 5, 200)
+    pH = np.linspace(0, 16, 300)
+    d, names, text = pb.diagram(U, pH)
+    plt.savefig(f'plots/phase-diagram-0K.png')
+    # Clear Figure 2 with clf() function:
+    plt.clf()
 
     # get voltage profile
     v_points = [get_eq_voltage(2 * epot_Li2O, epot_Li2O2, 2),

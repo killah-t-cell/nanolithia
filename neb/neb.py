@@ -58,5 +58,6 @@ epot_IS = IS_image.get_potential_energy()
 epot_TS = TS_image.get_potential_energy()
 
 barrier = epot_TS - epot_IS
-print('Energy barrier:', barrier)
+print('Energy barrier:', barrier) # Energy barrier: 0.8683292062632475
+
 
