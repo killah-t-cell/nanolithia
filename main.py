@@ -4,6 +4,7 @@
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 import ase.db
 from ase.calculators.dftd3 import DFTD3
+from ase.dft import DOS
 from ase.phasediagram import PhaseDiagram, Pourbaix
 from gpaw import PW, GPAW
 
@@ -114,14 +115,52 @@ if __name__ == '__main__':
     plt.savefig(f'plots/convex-hull-0K.png')
     pd.plot(show=True)
 
-    # plot phase diagram
-    pb = Pourbaix(refs, Li=1, O=1)
-    U = np.linspace(-5, 5, 200)
-    pH = np.linspace(0, 16, 300)
-    d, names, text = pb.diagram(U, pH)
-    plt.savefig(f'plots/phase-diagram-0K.png')
-    # Clear Figure 2 with clf() function:
-    plt.clf()
+    # # plot phase diagram
+    # pb = Pourbaix(refs, Li=1, O=1)
+    # U = np.linspace(-5, 5, 200)
+    # pH = np.linspace(0, 16, 300)
+    # d, names, text = pb.diagram(U, pH)
+    # plt.savefig(f'plots/phase-diagram-0K.png')
+    # plt.clf()e
+
+    ###### get DOS
+    # Li = bulk('Li', crystalstructure='bcc', a=3.51, cubic=True)
+    # xc = 'LDA'
+    # calcname = f'Ag-{xc}'
+    # calc = GPAW(mode=PW(500), kpts=(6, 6, 6), xc=xc, txt=calcname + '.log')
+    # Li.calc = calc
+    #
+    # energy = Li.get_potential_energy()
+    # print('Energy:', energy, 'eV')
+    #
+    # dos = DOS(Li.calc, npts=500, width=0)
+    # energies = dos.get_energies()
+    # e_f = Li.calc.get_fermi_level()
+    # weights = dos.get_dos()
+    #
+    # # plot DOS
+    # plt.plot(energies - e_f, weights)
+    # plt.xlabel('E - E_f [eV]')
+    # plt.ylabel('DOS')
+    # plt.xlim([-20, 8])
+    # plt.show()
+    #####
+    Li2O = get_Li2O(db, xc).toatoms()
+    calc = GPAW(mode=PW(500), kpts=(6, 6, 6), xc=xc)
+    Li2O.calc = calc
+    Li2O.get_potential_energy()
+    dos = DOS(Li2O.calc, npts=500, width=0)
+    energies = dos.get_energies()
+    e_f = Li2O.calc.get_fermi_level()
+    weights = dos.get_dos()
+
+    # plot DOS
+    plt.plot(energies - e_f, weights)
+    plt.xlabel('E - E_f [eV]')
+    plt.ylabel('DOS')
+    plt.xlim([-20, 8])
+    plt.show()
+    #####
 
     # get voltage profile
     v_points = [get_eq_voltage(2 * epot_Li2O, epot_Li2O2, 2),
