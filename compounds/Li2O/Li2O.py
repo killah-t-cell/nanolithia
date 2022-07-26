@@ -4,7 +4,7 @@ from gpaw import GPAW, FermiDirac, PW
 from ase.calculators.dftd3 import DFTD3
 
 
-def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20, converged=False, tol='null', structure='mp-1960'):
+def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20, converged=False, tol='null', structure='mp-1960', spinpol=False):
     """Define a Li2O crystal and save it to the database, if it hasn't already been saved
 
         db: Database
@@ -25,7 +25,7 @@ def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20, converged=False, tol='null', 
     parameters = dict(mode=PW(ecut),
                       nbands=nbands,
                       kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
-                      spinpol=True,
+                      spinpol=spinpol,
                       convergence={'eigenstates': 1.0e-4,  # eV^2 / electron
                                    'energy': 2.0e-4,  # eV / electron
                                    'density': 1.0e-3, },

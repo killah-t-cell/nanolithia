@@ -20,11 +20,11 @@ def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 12), ecut_range=range(35
         nkpts_convergence = {}
         for ecut in ecut_range:
             at = atom(db, xc, ecut=ecut)
-            e = at.get_potential_energy()
+            e = at.toatoms().get_potential_energy()
             ecut_convergence[ecut] = e
         for k in k_range:
             at = atom(db, xc, nkpts=k)
-            e = at.get_potential_energy()
+            e = at.toatoms().get_potential_energy()
             nkpts_convergence[k] = e
 
         # process results
@@ -63,4 +63,4 @@ def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 12), ecut_range=range(35
         plt.savefig(f'plots/{formula}-{xc}-convergence.png')
         plt.show()
 
-        return ecut_converged, nkpts_converged
+        print(formula, 'ecut conv=',ecut_converged, 'nkpts conv=',nkpts_converged)

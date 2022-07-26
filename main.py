@@ -22,7 +22,7 @@ from compounds.LiO3.LiO3 import get_LiO3
 from compounds.LiO8.LiO8 import get_LiO8
 from compounds.O2.O2 import get_O2
 from convergence import converge
-from voltages.voltages import get_eq_voltage
+from properties.voltages import get_eq_voltage
 
 # TODO
 # get correct formation energies
@@ -33,7 +33,7 @@ def get_formation_energy(db, xc, compound_epot, x, y):
     epot_Li_cell = Li.get_potential_energy()
     epot_Li = epot_Li_cell / 2
 
-    O = get_O2(db, xc).toatoms()
+    O = get_O2(db, xc, ecut=750).toatoms()
     epot_O_cell = O.get_potential_energy()
     epot_O = epot_O_cell / 4
 
@@ -72,11 +72,14 @@ if __name__ == '__main__':
     epot_LiO3 = epot_LiO3_cell / 2
     epot_LiO8 = epot_LiO8_cell / 2
 
-    # get voltages
+    # get properties
     get_eq_voltage(2 * epot_Li2O, epot_Li2O2, 2)
     get_eq_voltage(2 * epot_Li2O, epot_LiO2, 3)
-    # compounds_to_converge = (get_Li2O2, get_LiO2, get_Li, get_Li2O)
-    # converge(db, xc, *compounds_to_converge)
+
+    # converge
+    print('starting convergence study')
+    compounds_to_converge = (get_Li2O2, get_LiO2, get_O2)
+    converge(db, 'LDA', *compounds_to_converge)
 
     # get convex hull
     efLiO2 = get_formation_energy(db, xc, epot_LiO2, 1, 2)
@@ -91,7 +94,6 @@ if __name__ == '__main__':
     print('efLi2O2=', efLi2O2 / 4)
     print('efLiO2=', efLiO2 / 3)
     print('efLiO8=', efLiO8 / 9)
-    print('O2 e =', O2.get_potential_energy())
 
     # save new formation energies to db
     db.update(id=get_Li2O(db, xc).id, formation_energy=efLi2O)
@@ -114,53 +116,6 @@ if __name__ == '__main__':
     pd.plot()
     plt.savefig(f'plots/convex-hull-0K.png')
     pd.plot(show=True)
-
-    # # plot phase diagram
-    # pb = Pourbaix(refs, Li=1, O=1)
-    # U = np.linspace(-5, 5, 200)
-    # pH = np.linspace(0, 16, 300)
-    # d, names, text = pb.diagram(U, pH)
-    # plt.savefig(f'plots/phase-diagram-0K.png')
-    # plt.clf()e
-
-    ###### get DOS
-    # Li = bulk('Li', crystalstructure='bcc', a=3.51, cubic=True)
-    # xc = 'LDA'
-    # calcname = f'Ag-{xc}'
-    # calc = GPAW(mode=PW(500), kpts=(6, 6, 6), xc=xc, txt=calcname + '.log')
-    # Li.calc = calc
-    #
-    # energy = Li.get_potential_energy()
-    # print('Energy:', energy, 'eV')
-    #
-    # dos = DOS(Li.calc, npts=500, width=0)
-    # energies = dos.get_energies()
-    # e_f = Li.calc.get_fermi_level()
-    # weights = dos.get_dos()
-    #
-    # # plot DOS
-    # plt.plot(energies - e_f, weights)
-    # plt.xlabel('E - E_f [eV]')
-    # plt.ylabel('DOS')
-    # plt.xlim([-20, 8])
-    # plt.show()
-    #####
-    Li2O = get_Li2O(db, xc).toatoms()
-    calc = GPAW(mode=PW(500), kpts=(6, 6, 6), xc=xc)
-    Li2O.calc = calc
-    Li2O.get_potential_energy()
-    dos = DOS(Li2O.calc, npts=500, width=0)
-    energies = dos.get_energies()
-    e_f = Li2O.calc.get_fermi_level()
-    weights = dos.get_dos()
-
-    # plot DOS
-    plt.plot(energies - e_f, weights)
-    plt.xlabel('E - E_f [eV]')
-    plt.ylabel('DOS')
-    plt.xlim([-20, 8])
-    plt.show()
-    #####
 
     # get voltage profile
     v_points = [get_eq_voltage(2 * epot_Li2O, epot_Li2O2, 2),

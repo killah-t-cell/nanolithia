@@ -70,15 +70,15 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='
 
 
 # nkpts=8
-# ecut=500
-# U_correction = {'O': ':p,0.33,0'}
+# ecut=800
+# U_correction = {'O': ':p,0.92,0'}
 # parameters = dict(mode=PW(ecut),kpts={'size': (nkpts, nkpts, nkpts)}, setups=U_correction, xc='PBE')
 # LiO2 = read(pathlib.Path(__file__).parent / 'LiO2_mp-1018789.poscar')
 # calc = GPAW(**parameters)
 # LiO2.calc = calc
 # # get potential energy
 # e = LiO2.get_potential_energy()
-# e
+# print('e = ', e)
 
 
 # goal -54.744
