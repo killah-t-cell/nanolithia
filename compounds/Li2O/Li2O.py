@@ -22,8 +22,7 @@ def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20, converged=False, tol='null', 
     """
     name = f'Li2O-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
 
-    parameters = dict(mode=PW(ecut),
-                      nbands=nbands,
+    parameters = dict(nbands=nbands,
                       kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
                       spinpol=spinpol,
                       convergence={'eigenstates': 1.0e-4,  # eV^2 / electron
@@ -45,7 +44,7 @@ def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20, converged=False, tol='null', 
                        xc='PBE')
             calc = DFTD3(dft=dft, xc='PBE')
         else:
-            calc = GPAW(txt=name + '.txt',
+            calc = GPAW(mode=PW(ecut), txt=name + '.txt',
                         **parameters)
 
         Li2O.calc = calc
@@ -61,6 +60,7 @@ def get_Li2O(db, xc, nkpts=8, ecut=500, nbands=20, converged=False, tol='null', 
                  nkpts=nkpts,
                  ecut=ecut,
                  relaxed=True,
+                 calc_parameters=str(parameters),
                  converged=converged,
                  structure=structure,
                  tol=tol)

@@ -21,8 +21,7 @@ def get_LiO8(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='
     name = f'LiO8-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
     U_correction = {'O': ':p,0.33,0'}  # taking the {'O': ':p,0.33,0'} from the superoxide example.
 
-    parameters = dict(mode=PW(ecut),
-                      kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
+    parameters = dict(kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
                       spinpol=True,
                       convergence={'eigenstates': 1.0e-4,  # eV^2 / electron
                                    'energy': 2.0e-4,  # eV / electron
@@ -44,7 +43,7 @@ def get_LiO8(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='
                        xc='PBE')
             calc = DFTD3(dft=dft, xc='PBE')
         else:
-            calc = GPAW(txt=name + '.txt',
+            calc = GPAW(mode=PW(ecut), txt=name + '.txt',
                         **parameters)
 
         LiO8.calc = calc
@@ -60,6 +59,7 @@ def get_LiO8(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='
                  nkpts=nkpts,
                  ecut=ecut,
                  relaxed=True,
+                 calc_parameters=str(parameters),
                  converged=converged,
                  structure=structure,
                  tol=tol)

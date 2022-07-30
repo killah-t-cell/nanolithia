@@ -23,8 +23,7 @@ def get_O2(db, xc, nkpts=4, ecut=900, converged=True, tol=1e-4, structure='mp-12
     # https://chemistry.stackexchange.com/questions/6709/why-is-density-functional-theory-notoriously-bad-at-describing-oxygen-molecules
     U_correction = {'O': ':p,0.75,0'}
 
-    parameters = dict(mode=PW(ecut),
-                      kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
+    parameters = dict(kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
                       setups=U_correction,
                       xc=xc)
 
@@ -42,7 +41,7 @@ def get_O2(db, xc, nkpts=4, ecut=900, converged=True, tol=1e-4, structure='mp-12
                        xc='PBE')
             calc = DFTD3(dft=dft, xc='PBE')
         else:
-            calc = GPAW(txt=name + '.txt',
+            calc = GPAW(mode=PW(ecut), txt=name + '.txt',
                         **parameters)
 
         O2.calc = calc
@@ -58,6 +57,7 @@ def get_O2(db, xc, nkpts=4, ecut=900, converged=True, tol=1e-4, structure='mp-12
                  nkpts=nkpts,
                  ecut=ecut,
                  relaxed=True,
+                 calc_parameters=str(parameters),
                  converged=converged,
                  structure=structure,
                  tol=tol)

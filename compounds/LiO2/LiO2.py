@@ -34,8 +34,7 @@ def get_LiO2(db, xc, nkpts=4, ecut=500, converged=True, tol=1e-4, structure='mp-
     name = f'LiO2-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
     U_correction = {'O': ':p,0.33,0'}
 
-    parameters = dict(mode=PW(ecut),
-                      kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
+    parameters = dict(kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
                       spinpol=True,
                       convergence={'eigenstates': 1.0e-4,  # eV^2 / electron
                                   'energy': 2.0e-4,  # eV / electron
@@ -57,7 +56,7 @@ def get_LiO2(db, xc, nkpts=4, ecut=500, converged=True, tol=1e-4, structure='mp-
                        xc='PBE')
             calc = DFTD3(dft=dft, xc='PBE')
         else:
-            calc = GPAW(txt=name + '.txt',
+            calc = GPAW(mode=PW(ecut), txt=name + '.txt',
                         **parameters)
 
         LiO2.calc = calc
@@ -74,6 +73,7 @@ def get_LiO2(db, xc, nkpts=4, ecut=500, converged=True, tol=1e-4, structure='mp-
                  ecut=ecut,
                  relaxed=True,
                  converged=converged,
+                 calc_parameters=str(parameters),
                  structure=structure,
                  tol=tol)
 

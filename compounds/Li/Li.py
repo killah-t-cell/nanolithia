@@ -28,13 +28,12 @@ def get_Li(db, xc, nkpts=8, ecut=500, nbands=-10, converged=False, tol='null', s
     """
     name = f'Li-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
 
-    parameters = dict(mode=PW(ecut),
-                      nbands=nbands,
+    parameters = dict(nbands=nbands,
                       kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
                       spinpol=True,
                       convergence={'eigenstates': 1.0e-4,  # eV^2 / electron
-                                  'energy': 2.0e-4,  # eV / electron
-                                  'density': 1.0e-3, },
+                                   'energy': 2.0e-4,  # eV / electron
+                                   'density': 1.0e-3, },
                       xc=xc)
 
     id = db.reserve(name=name, xc=xc, nkpts=nkpts, ecut=ecut)
@@ -50,7 +49,7 @@ def get_Li(db, xc, nkpts=8, ecut=500, nbands=-10, converged=False, tol='null', s
                        xc='PBE')
             calc = DFTD3(dft=dft, xc='PBE')
         else:
-            calc = GPAW(txt=name + '.txt',
+            calc = GPAW(mode=PW(ecut), txt=name + '.txt',
                         **parameters)
         Li.calc = calc
 
@@ -71,10 +70,8 @@ def get_Li(db, xc, nkpts=8, ecut=500, nbands=-10, converged=False, tol='null', s
                  ecut=ecut,
                  relaxed=True,
                  converged=converged,
+                 calc_parameters=str(parameters),
                  structure=structure,
                  tol=tol)
 
     return db.get(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
-
-
-
