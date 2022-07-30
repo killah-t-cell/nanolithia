@@ -3,6 +3,7 @@ from ase.io import read
 from gpaw import GPAW, PW
 from ase.calculators.dftd3 import DFTD3
 
+
 def get_O2(db, xc, nkpts=4, ecut=900, converged=True, tol=1e-4, structure='mp-12957'):
     """Define a O2 crystal and save it to the database, if it hasn't already been saved
 
@@ -18,7 +19,9 @@ def get_O2(db, xc, nkpts=4, ecut=900, converged=True, tol=1e-4, structure='mp-12
     Returns O2 crystal
     """
     name = f'O2-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
-    U_correction = {'O': ':p,1.05,0'}  # because it's an oxide
+    # this gives the proper binding energy 4.95 eV for O = -1.8302341313767456 (O_epot_cell / 2) - (2 * e_O)
+    # https://chemistry.stackexchange.com/questions/6709/why-is-density-functional-theory-notoriously-bad-at-describing-oxygen-molecules
+    U_correction = {'O': ':p,0.75,0'}
 
     parameters = dict(mode=PW(ecut),
                       kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
@@ -60,3 +63,16 @@ def get_O2(db, xc, nkpts=4, ecut=900, converged=True, tol=1e-4, structure='mp-12
                  tol=tol)
 
     return db.get(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
+
+# nkpts = 4
+# ecut = 900
+# U_correction = {'O': ':p,0.75,0'}
+# parameters = dict(mode=PW(ecut), kpts={'size': (nkpts, nkpts, nkpts)}, setups=U_correction, xc='PBE')
+# O2 = read(pathlib.Path(__file__).parent / 'O2_mp-12957.poscar')
+# calc = GPAW(**parameters)
+# O2.calc = calc
+# # get potential energy
+# e = O2.get_potential_energy()
+# print('e = ', e)
+# e_O = -1.8302341313767456
+# print("binding energy = ", ((e / 2) - (2 * e_O)))

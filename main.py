@@ -36,7 +36,6 @@ def get_formation_energy(db, xc, compound_epot, x, y):
     O = get_O2(db, xc).toatoms()
     epot_O_cell = O.get_potential_energy()
     epot_O = epot_O_cell / 4
-    print(epot_O)
 
     return compound_epot - (x * epot_Li + y * epot_O)
 
@@ -91,6 +90,7 @@ if __name__ == '__main__':
 
     # print formation energies
     print('epot_Li2O=', epot_Li2O_cell)
+    print('epot_O2=', epot_O2_cell)
     print('epot_LiO2=', epot_LiO2_cell)  # goal -27.372
     print('epot_Li2O2=', epot_Li2O2_cell)  # goal -36.972
 
