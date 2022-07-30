@@ -33,9 +33,10 @@ def get_formation_energy(db, xc, compound_epot, x, y):
     epot_Li_cell = Li.get_potential_energy()
     epot_Li = epot_Li_cell / 2
 
-    O = get_O2(db, xc, ecut=750).toatoms()
+    O = get_O2(db, xc).toatoms()
     epot_O_cell = O.get_potential_energy()
     epot_O = epot_O_cell / 4
+    print(epot_O)
 
     return compound_epot - (x * epot_Li + y * epot_O)
 
@@ -77,9 +78,9 @@ if __name__ == '__main__':
     get_eq_voltage(2 * epot_Li2O, epot_LiO2, 3)
 
     # converge
-    print('starting convergence study')
-    compounds_to_converge = (get_Li2O2, get_LiO2, get_O2)
-    converge(db, 'LDA', *compounds_to_converge)
+    # print('starting convergence study')
+    # compounds_to_converge = (get_Li2O2, get_LiO2, get_O2)
+    # converge(db, 'LDA', *compounds_to_converge)
 
     # get convex hull
     efLiO2 = get_formation_energy(db, xc, epot_LiO2, 1, 2)
@@ -89,7 +90,10 @@ if __name__ == '__main__':
     efLiO8 = get_formation_energy(db, xc, epot_LiO8, 1, 8)
 
     # print formation energies
-    print('epot_Li2O=', epot_Li2O / 3)
+    print('epot_Li2O=', epot_Li2O_cell)
+    print('epot_LiO2=', epot_LiO2_cell)  # goal -27.372
+    print('epot_Li2O2=', epot_Li2O2_cell)  # goal -36.972
+
     print('efLi2O=', efLi2O / 3)
     print('efLi2O2=', efLi2O2 / 4)
     print('efLiO2=', efLiO2 / 3)

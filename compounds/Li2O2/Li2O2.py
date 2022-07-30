@@ -3,8 +3,19 @@ from ase.io import read, write
 from gpaw import GPAW, PW
 from ase.calculators.dftd3 import DFTD3
 
+# the goal energy 36.972 is found when
+# U_correction = {'O': ':p,0.76,0'}
+# ecut = 575
+# and nkpts = 6
+# which is just like in the paper "A Facile Mechanism for Recharging Li2O2 in Li−O2 Batteries"
 
-def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null', structure='mp-841', spinpol=False):
+# Or when
+# U_correction = {'O': ':p,0.96,0'}
+# ecut = 900 (the converged value)
+# and nkpts = 6
+# which is the values achieved after a convergence study
+# this gives a slightly higher accuracy
+def get_Li2O2(db, xc, nkpts=6, ecut=900, converged=True, tol=1e-4, structure='mp-841', spinpol=False):
     """Define a Li2O2 crystal and save it to the database, if it hasn't already been saved
 
         db: Database
@@ -19,7 +30,7 @@ def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null', structure=
     Returns Li202 crystal.
     """
     name = f'Li2O2-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
-    U_correction = {'O': ':p,0.76,0'}
+    U_correction = {'O': ':p,0.96,0'}
 
     parameters = dict(mode=PW(ecut),
                       kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
@@ -68,24 +79,13 @@ def get_Li2O2(db, xc, nkpts=8, ecut=575, converged=False, tol='null', structure=
     return db.get(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
 
 # goal -36.972
-#550, 8, unnormalized, -36.7
-#575, 8, unnormalized, -37.0
-#600, 8, unnormalized, -37.18
-#800, 8, unnormalized, -37.4
-
-
-# LDA, with U correction
-# -41.700487
-
-# LDA without U correction
-# -41.70544355635925
-
-# LDA without U correction, unnormalized
-# -41.70544355635925
-
-# PBE with U correction {'O': ':p,0.76'} k=8, ecut=500
-# -36.4
-
-# PBE with U correction {'O': ':p,0.76'} k=8, ecut=600
-
-# PBE without U correction, k=8, ecut=600
+# nkpts=6
+# ecut=900
+# U_correction = {'O': ':p,0.96,0'}
+# parameters = dict(mode=PW(ecut),kpts={'size': (nkpts, nkpts, nkpts)}, setups=U_correction, xc='PBE')
+# LiO2 = read(pathlib.Path(__file__).parent / 'Li2O2_mp-841.poscar')
+# calc = GPAW(**parameters)
+# LiO2.calc = calc
+# # get potential energy
+# e = LiO2.get_potential_energy()
+# print('e = ', e)  # e =  -36.97293821936389

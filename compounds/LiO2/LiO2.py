@@ -5,7 +5,19 @@ from gpaw import GPAW, PW
 from ase.calculators.dftd3 import DFTD3
 
 
-def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='mp-1018789'):
+# the goal energy is found when
+# U_correction = {'O': ':p,0.33,0'}
+# ecut = 500
+# and nkpts = 4
+# which is just like in the paper "A Facile Mechanism for Recharging Li2O2 in Li−O2 Batteries"
+
+# Or when
+# U_correction = {'O': ':p,0.93,0'}
+# ecut = 900 (the converged value)
+# and nkpts = 4
+# which is the values achieved after a convergence study
+# this gives a slightly higher accuracy
+def get_LiO2(db, xc, nkpts=4, ecut=500, converged=True, tol=1e-4, structure='mp-1018789'):
     """Define a LiO2 crystal and save it to the database, if it hasn't already been saved
 
         db: Database
@@ -20,8 +32,7 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='
     Returns LiO2 crystal (which is mostly an unstable crystal).
     """
     name = f'LiO2-{structure}-{xc}-{nkpts}x{nkpts}x{nkpts}-{ecut:.0f}'
-    U_correction = {'O': ':p,0.33,0'} # the original paper has this at {'O': ':p,0.33,0'} for superoxides.
-                                      # 0.76 with ecut=575 works too
+    U_correction = {'O': ':p,0.33,0'}
 
     parameters = dict(mode=PW(ecut),
                       kpts={'size': (nkpts, nkpts, nkpts), 'gamma': True},
@@ -69,19 +80,19 @@ def get_LiO2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='
     return db.get(name=name, xc=xc, nkpts=nkpts, ecut=ecut, structure=structure)
 
 
-# nkpts=8
-# ecut=800
-# U_correction = {'O': ':p,0.92,0'}
+# nkpts=4
+# ecut=900
+# U_correction = {'O': ':p,0.93,0'}
 # parameters = dict(mode=PW(ecut),kpts={'size': (nkpts, nkpts, nkpts)}, setups=U_correction, xc='PBE')
 # LiO2 = read(pathlib.Path(__file__).parent / 'LiO2_mp-1018789.poscar')
 # calc = GPAW(**parameters)
 # LiO2.calc = calc
 # # get potential energy
 # e = LiO2.get_potential_energy()
-# print('e = ', e)
+# print('e = ', e) # e =  -27.385123065156172
 
 
-# goal -54.744
+# goal -27.372
 # 575, 8, PBE -> -50.25838214237331
 
 # currently running without setups, ecut=900, k=8 -> -53.043477

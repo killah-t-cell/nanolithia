@@ -3,7 +3,7 @@ from ase.io import read
 from gpaw import GPAW, PW
 from ase.calculators.dftd3 import DFTD3
 
-def get_O2(db, xc, nkpts=8, ecut=500, converged=False, tol='null', structure='mp-12957'):
+def get_O2(db, xc, nkpts=4, ecut=900, converged=True, tol=1e-4, structure='mp-12957'):
     """Define a O2 crystal and save it to the database, if it hasn't already been saved
 
         db: Database
