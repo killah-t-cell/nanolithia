@@ -3,7 +3,7 @@ from ase.build import bulk
 from matplotlib import pyplot as plt
 import matplotlib as mpl
 
-
+# TODO move this to Compound() at some point
 def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 12), ecut_range=range(350, 901, 50)):
     """
     :param db:
@@ -27,7 +27,7 @@ def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 12), ecut_range=range(35
             e = at.toatoms().get_potential_energy()
             nkpts_convergence[k] = e
 
-        # process results
+        # process logs
         ecut_lists = sorted(ecut_convergence.items())  # sorted by key, return a list of tuples
         nkpts_lists = sorted(nkpts_convergence.items())  # sorted by key, return a list of tuples
         ecut_list, ecut_e_list = zip(*ecut_lists)  # unpack a list of pairs into two tuples
@@ -45,7 +45,7 @@ def converge(db, xc, *atoms, tol=1e-4, k_range=range(4, 12), ecut_range=range(35
         # write converged result into db
         atom(db, xc, nkpts=nkpts_converged, ecut=ecut_converged, converged=True, tol=tol)
 
-        # plot results
+        # plot logs
         mpl.rcParams['figure.dpi'] = 300  # increase plot dpi
         fig, (ax_ecut, ax_nkpts) = plt.subplots(2)
         fig.suptitle(f'{formula} {xc} convergence study')

@@ -1,6 +1,3 @@
-from compounds.Li.Li import get_Li
-
-
 def get_eq_voltage(epot_A, epot_B, n: int):
     # calculate the equilibrium potential for the case of a Li2O/Li metal battery from the intercalation energy of Li in
     # Li2O. For simplicity, use that assumption that all vibrational energies and entropic terms cancel each other.

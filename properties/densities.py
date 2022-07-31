@@ -1,7 +1,3 @@
-MOL_MASS_LI2O = 29.88
-MOL_MASS_LI = 6.941
-MOL_MASS_LI2O2 = 45.881
-
 def get_mass_energy_density(voltage, mol_mass, x, watt_hour=True):
     F = 96485.3321
     MTSE = ((x * voltage) / mol_mass) * F

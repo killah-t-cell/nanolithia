@@ -1,12 +1,11 @@
 from ase.constraints import FixAtoms
-from ase.io import read
 import ase.db
 from ase.neb import NEB
 from ase.optimize import BFGS
 from ase.visualize import view
 from gpaw import GPAW, PW
 
-from compounds.Li2O.Li2O import get_Li2O
+from compounds.compounds import get_Li2O
 
 db = ase.db.connect('compounds.db')
 xc = 'PBE'
