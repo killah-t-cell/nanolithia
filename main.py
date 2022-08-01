@@ -62,7 +62,7 @@ if __name__ == '__main__':
     # get electronic structure
     for compound in [Li2O, Li2O2, LiO2]:
         compound.set_pdos()
-        compound.set_band_structure()
+        compound.set_band_structure(emax=13)
         compound.set_dos()
         compound.set_ldos()
 
