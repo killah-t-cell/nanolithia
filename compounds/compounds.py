@@ -99,8 +99,8 @@ class Compound:
         self.dos_energies = dos.get_energies()
         self.dos_weights = dos.get_dos()
 
-        plt.plot(self.dos_energies - self.ef, self.dos_weights)
-        plt.xlabel('E - E_f [eV]')
+        plt.plot(self.dos_energies, self.dos_weights)
+        plt.xlabel('Energy (eV)')
         plt.ylabel(f'{self.formula}_DOS')
         plt.savefig(os.path.join(ROOT_DIR, f'plots/{self.formula}-{self.xc}-{self.nkpts}-{self.ecut}-DOS.png'))
         plt.show()
@@ -115,10 +115,10 @@ class Compound:
             I = np.trapz(pdos, energy)
             center = np.trapz(pdos * energy, energy) / I
             width = np.sqrt(np.trapz(pdos * (energy - center) ** 2, energy) / I)
-            plt.plot(energy - self.ef, pdos, label=f'{self.atoms[atom].symbol}', lw=2, alpha=0.7)
+            plt.plot(energy, pdos, label=f'{self.atoms[atom].symbol}', lw=2, alpha=0.7)
 
         plt.legend(loc='best')
-        plt.xlabel('E - E_f (eV)')
+        plt.xlabel('Energy (eV)')
         plt.ylabel(f'projected {self.formula}-DOS on atoms')
         plt.savefig(os.path.join(ROOT_DIR, f'plots/{self.formula}-{self.xc}-{self.nkpts}-{self.ecut}-PDOS.png'))
         plt.show()
@@ -131,10 +131,10 @@ class Compound:
         for atom in [0, -1]:  # 0 is Li, -1 is O
             for orbit in ['s', 'p']:
                 energy, pdos = self.calc.get_orbital_ldos(a=atom, spin=0, angular=orbit, npts=npts, width=None)
-                plt.plot(energy - self.ef, pdos, label=f'{self.atoms[atom].symbol}-{orbit}', lw=2, alpha=0.7)
+                plt.plot(energy, pdos, label=f'{self.atoms[atom].symbol}-{orbit}', lw=2, alpha=0.7)
 
         plt.legend(loc='best')
-        plt.xlabel('E - E_f (eV)')
+        plt.xlabel('Energy (eV)')
         plt.ylabel(f'Localized {self.formula}-DOS on atoms')
         plt.savefig(os.path.join(ROOT_DIR, f'plots/{self.formula}-{self.xc}-{self.nkpts}-{self.ecut}-LDOS.png'))
         plt.show()
@@ -145,7 +145,7 @@ class Compound:
         # set prerequisites
         lat = self.atoms.cell.get_bravais_lattice()
 
-        path = self.atoms.cell.bandpath(density=16)
+        path = self.atoms.cell.bandpath(density=7)
         self.calc.set(kpts=path, fixdensity=True,
                       symmetry=symmetry)
         self.atoms.get_potential_energy()
