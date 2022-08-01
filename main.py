@@ -60,13 +60,9 @@ if __name__ == '__main__':
     get_specific_capacity(MOL_MASS_LI2O, x)
 
     # get electronic structure
-    Li2O.set_dos()
     for compound in [Li2O, Li2O2, LiO2]:
+        compound.set_pdos()
+        compound.set_band_structure()
         compound.set_dos()
-        plt.plot(compound.dos_energies, compound.dos_weights)
-        plt.xlabel('energy [eV]')
-        plt.ylabel(f'{compound.formula}_DOS')
-        plt.savefig(f'plots/{compound.formula}-{compound.xc}-{compound.nkpts}-{compound.ecut}-DOS.png')
-        plt.show()
+        compound.set_ldos()
 
-    Li2O.set_band_structure()

@@ -3,13 +3,16 @@ import pathlib
 import sys
 
 import ase.db
+import numpy as np
 from ase.dft import DOS
+from ase.dft.wannier import Wannier
 from ase.io import read, write
 from gpaw import GPAW, FermiDirac, PW, restart
 from ase.calculators.dftd3 import DFTD3
+from gpaw.utilities.dos import RestartLCAODOS, fold, print_projectors
+from matplotlib import pyplot as plt
 
 from global_vars import ROOT_DIR
-
 
 class Compound:
     def __init__(self, formula, structure, db, xc, nkpts=8, ecut=500, nbands=None, converged=False, tol='null',
@@ -83,6 +86,7 @@ class Compound:
                           tol=self.tol)
         else:
             self.calc = GPAW(os.path.join(ROOT_DIR, f'calculators/{self.name}.gpw'))
+            self.ef = self.calc.get_fermi_level()
             self.atoms = self.calc.get_atoms()
             self.pot_energy = self.atoms.get_potential_energy()
 
@@ -93,22 +97,66 @@ class Compound:
         dos = DOS(self.calc, npts=800, width=0)
         self.dos_energies = dos.get_energies()
         self.dos_weights = dos.get_dos()
+        plt.plot(self.dos_energies - self.ef, self.dos_weights)
+        plt.xlabel('E - E_fermi [eV]')
+        plt.ylabel(f'{self.formula}_DOS')
+        plt.savefig(os.path.join(ROOT_DIR, f'plots/{self.formula}-{self.xc}-{self.nkpts}-{self.ecut}-DOS.png'))
+        plt.show()
 
     def set_pdos(self):
-        return
+        self.set_energy()
+
+        for atom in [0, -1]:
+            energy, pdos = self.calc.get_orbital_ldos(a=atom, spin=0, angular='spd', npts=201, width=None)
+            I = np.trapz(pdos, energy)
+            center = np.trapz(pdos * energy, energy) / I
+            width = np.sqrt(np.trapz(pdos * (energy - center) ** 2, energy) / I)
+            plt.plot(energy, pdos, label=f'{self.atoms[atom].symbol}',  lw=2, alpha=0.7)
+
+        plt.legend(loc='best')
+        plt.xlabel('Energy (eV)')
+        plt.ylabel('projected DOS on atoms')
+        plt.savefig(os.path.join(ROOT_DIR, f'plots/{self.formula}-{self.xc}-{self.nkpts}-{self.ecut}-PDOS.png'))
+        plt.show()
+
+        return center, width
 
     def set_ldos(self):
-        return
+        self.set_energy()
+
+        energy = [0] * 201
+        for orbit in ['s', 'p', 'd']:
+            for atom in [0, -1]:  # 0 is Li, -1 is O
+                e, pdos = self.calc.get_orbital_ldos(a=atom, spin=0, angular=orbit, npts=201, width=None)
+                energy = [x + y for x, y in zip(e, energy)]
+                print(self.atoms[atom].symbol)
+            plt.plot(energy, pdos, label=f'{orbit}', lw=2, alpha=0.7)
+
+        plt.legend(loc='best')
+        plt.xlabel('Energy (eV)')
+        plt.ylabel('Localized DOS on atoms')
+        plt.savefig(os.path.join(ROOT_DIR, f'plots/{self.formula}-{self.xc}-{self.nkpts}-{self.ecut}-LDOS.png'))
+        plt.show()
 
     def set_band_structure(self, symmetry='off', path='GXWKL', npoints=60, emax=10.0):
-        self.set_energy()
-        GPAW(os.path.join(ROOT_DIR, f'calculators/{self.name}.gpw')).fixed_density(
-            nbands=self.nbands,
-            symmetry=symmetry,
-            kpts={'path': path, 'npoints': npoints},
-            convergence={'bands': self.nbands/2})
+        if self.nbands is None:
+            bands = 16
+        else:
+            bands = self.nbands
 
+        self.set_energy()
+
+        # set prerequisites
+        lat = self.atoms.cell.get_bravais_lattice()
+        print(list(lat.get_special_points()))
+
+        path = self.atoms.cell.bandpath(density=7)
+        self.calc.set(kpts=path, fixdensity=True,
+                 symmetry=symmetry)
+        self.atoms.get_potential_energy()
+
+        # get and save bs
         self.bs = self.calc.band_structure()
         self.bs.write(os.path.join(ROOT_DIR, f'bs/{self.name}_bs.json'))
-
         self.bs.plot(filename=os.path.join(ROOT_DIR, f'plots/{self.name}-band-structure.png'), show=True, emax=emax)
+
