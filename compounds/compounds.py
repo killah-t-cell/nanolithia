@@ -1,23 +1,23 @@
 import os
-import pathlib
-import sys
 
-import ase.db
 import numpy as np
-from ase.dft import DOS
-from ase.dft.wannier import Wannier
-from ase.io import read, write
-from gpaw import GPAW, FermiDirac, PW, restart
 from ase.calculators.dftd3 import DFTD3
-from gpaw.utilities.dos import RestartLCAODOS, fold, print_projectors
+from ase.dft import DOS
+from ase.dft.bandgap import bandgap
+from ase.io import read
+from gpaw import GPAW, PW
+from gpaw.hybrids.energy import non_self_consistent_energy
 from matplotlib import pyplot as plt
+from ase.spacegroup import get_spacegroup
 
 from global_vars import ROOT_DIR
 
 
 class Compound:
     def __init__(self, formula, structure, db, xc, nkpts=8, ecut=500, nbands=None, converged=False, tol='null',
-                 spinpol=False, U_correction=None):
+                 spinpol=False, U_correction=None, extension='poscar', primitive=True):
+        self.primitive = primitive
+        self.bandgap = None
         self.ef = None
         self.id = None
         self.bs = None
@@ -43,7 +43,7 @@ class Compound:
                                             'density': 1.0e-3, },
                                xc=xc)
         # load crystal
-        self.atoms = read(os.path.join(ROOT_DIR, f'structures/{formula}_{structure}.poscar'))
+        self.atoms = read(os.path.join(ROOT_DIR, f'structures/{formula}_{structure}.{extension}'))
         os.path.join(ROOT_DIR, f'logs/{self.name}.txt'),
 
         # attach calculator
@@ -84,6 +84,7 @@ class Compound:
                           calc_parameters=str(self.parameters),
                           converged=self.converged,
                           structure=self.structure,
+                          primitive=self.primitive,
                           tol=self.tol)
         else:
             self.calc = GPAW(os.path.join(ROOT_DIR, f'calculators/{self.name}.gpw'))
@@ -92,6 +93,11 @@ class Compound:
             self.pot_energy = self.atoms.get_potential_energy()
 
         return self.pot_energy
+
+    def get_bandgap(self, direct=False):
+        self.set_energy()
+        self.bandgap = bandgap(self.calc, direct=direct)
+        return self.bandgap
 
     def set_dos(self):
         self.set_energy()
@@ -142,9 +148,7 @@ class Compound:
     def set_band_structure(self, symmetry='off', emax=10.0):
         self.set_energy()
 
-        # set prerequisites
-        lat = self.atoms.cell.get_bravais_lattice()
-
+        # set band structure calc
         path = self.atoms.cell.bandpath(density=7)
         self.calc.set(kpts=path, fixdensity=True,
                       symmetry=symmetry)
@@ -154,3 +158,17 @@ class Compound:
         self.bs = self.calc.band_structure()
         self.bs.write(os.path.join(ROOT_DIR, f'bs/{self.name}_bs.json'))
         self.bs.plot(filename=os.path.join(ROOT_DIR, f'plots/{self.name}-band-structure.png'), show=True, emax=emax)
+
+
+
+# def primitive_from_conventional_cell(atoms, spacegroup=1, setting=1):
+#     """Returns primitive cell given an Atoms object for a conventional
+#     cell and it's spacegroup."""
+#     from ase.spacegroup import Spacegroup
+#     from ase.build import cut
+#     sg = Spacegroup(spacegroup, setting)
+#     prim_cell = sg.scaled_primitive_cell  # Check if we need to transpose
+#     return cut(atoms, a=prim_cell[0], b=prim_cell[1], c=prim_cell[2])
+#
+#
+# energies = non_self_consistent_energy('<gpw-file>', xcname='HSE06')
