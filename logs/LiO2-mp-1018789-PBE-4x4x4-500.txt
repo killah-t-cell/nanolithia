@@ -6,9 +6,9 @@
  |___|_|             
 
 User:   gabrielbirnbaum@Gabriels-MacBook-Pro.local
-Date:   Sun Jul 31 21:50:06 2022
+Date:   Thu Aug  4 11:24:07 2022
 Arch:   x86_64
-Pid:    85834
+Pid:    86411
 Python: 3.9.13
 gpaw:   /Users/gabrielbirnbaum/PycharmProjects/nanolithia/venv/lib/python3.9/site-packages/gpaw
 _gpaw:  /Users/gabrielbirnbaum/PycharmProjects/nanolithia/venv/lib/python3.9/site-packages/
@@ -33,8 +33,5 @@ Input parameters:
   spinpol: False
   xc: PBE
 
-Input parameters:
-  setups: {O: :p,0.33,0}
-
-Memory usage: 153.59 MiB
-Date: Sun Jul 31 21:50:06 2022
+Memory usage: 151.52 MiB
+Date: Thu Aug  4 11:24:07 2022

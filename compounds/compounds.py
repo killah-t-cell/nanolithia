@@ -44,19 +44,9 @@ class Compound:
                                xc=xc)
         # load crystal
         self.atoms = read(os.path.join(ROOT_DIR, f'structures/{formula}_{structure}.{extension}'))
-        os.path.join(ROOT_DIR, f'logs/{self.name}.txt'),
 
         # attach calculator
-        if xc == 'DFTD3':
-            dft = GPAW(mode=PW(ecut),
-                       kpts=nkpts,
-                       nbands=nbands,
-                       txt=os.path.join(ROOT_DIR, f'logs/{self.name}.txt'),
-                       xc='PBE')
-            self.calc = DFTD3(dft=dft, xc='PBE')
-        else:
-            self.calc = GPAW(mode=PW(ecut), txt=os.path.join(ROOT_DIR, f'logs/{self.name}.txt'),
-                             **self.parameters)
+        self.calc = GPAW(mode=PW(ecut), txt=os.path.join(ROOT_DIR, f'logs/{self.name}.txt'),**self.parameters)
 
         if self.U_correction is not None:
             self.calc.set(setups=self.U_correction)
@@ -158,17 +148,3 @@ class Compound:
         self.bs = self.calc.band_structure()
         self.bs.write(os.path.join(ROOT_DIR, f'bs/{self.name}_bs.json'))
         self.bs.plot(filename=os.path.join(ROOT_DIR, f'plots/{self.name}-band-structure.png'), show=True, emax=emax)
-
-
-
-# def primitive_from_conventional_cell(atoms, spacegroup=1, setting=1):
-#     """Returns primitive cell given an Atoms object for a conventional
-#     cell and it's spacegroup."""
-#     from ase.spacegroup import Spacegroup
-#     from ase.build import cut
-#     sg = Spacegroup(spacegroup, setting)
-#     prim_cell = sg.scaled_primitive_cell  # Check if we need to transpose
-#     return cut(atoms, a=prim_cell[0], b=prim_cell[1], c=prim_cell[2])
-#
-#
-# energies = non_self_consistent_energy('<gpw-file>', xcname='HSE06')
