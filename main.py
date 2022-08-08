@@ -19,30 +19,23 @@ if __name__ == '__main__':
     mpl.rcParams['figure.dpi'] = 300  # increase plot dpi
 
     # get compounds
-    db = ase.db.connect('db/compounds.db')
     xc = 'PBE'
-
-    # del db[db.get(formula='Li2O4', ecut=500, xc=xc, nkpts=4).id]
-
-    Li2O = Compound('Li2O', 'mp-1960', db, xc, nbands=20, converged=True)
-    Li2O2 = Compound('Li2O2', 'mp-841', db, xc, nkpts=6, ecut=900, U_correction={'O': ':p,0.96,0'}, converged=True)
-    LiO2 = Compound('LiO2', 'mp-1018789', db, xc, nkpts=4, ecut=500, U_correction={'O': ':p,0.33,0'}, converged=True)
-    Li = Compound('Li', '1', db, xc, nbands=-10, converged=True)
-    O2 = Compound('O2', 'mp-12957', db, xc, nkpts=4, ecut=900, U_correction={'O': ':p,0.75,0'}, converged=True)
+    # TODO add correction to calc
+    Li2O = Compound('Li2O', 'mp-1960', xc, magmoms=[0.6, 0.6, 0.6], converged=True, extension='cif')
+    Li2O2 = Compound('Li2O2', 'mp-841', xc, magmoms=[0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6], converged=True)
+    LiO2 = Compound('LiO2', 'mp-1018789', xc, magmoms=[0.6, 0.6, 0.6, 0.6, 0.6, 0.6], converged=True)
+    Li = Compound('Li', '1', xc, ecut=530, converged=True)
+    O2 = Compound('O2', 'mp-12957', xc, magmoms=[0.6, 0.6, 0.6, 0.6], ecut=530, converged=True)
 
     # get potential energies
-    epot_Li2O_cell = Li2O.set_energy()
-    epot_Li2O2_cell = Li2O2.set_energy()
-    epot_LiO2_cell = LiO2.set_energy()
-    epot_O2_cell = O2.set_energy()
-
-    print(epot_Li2O_cell)
-    print(epot_Li2O2_cell)
-    print(epot_LiO2_cell)
+    epot_Li2O_cell = Li2O.get_energy()
+    epot_Li2O2_cell = Li2O2.get_energy()
+    epot_LiO2_cell = LiO2.get_energy()
+    epot_O2_cell = O2.get_energy()
 
     # The calculated energies are for the full cells. Convert them to the energy per formula unit.
-    epot_Li2O2 = epot_Li2O2_cell / 2  # len is 8, we want to get Li2O2 out of Li4O4, so we divide by 2. 4/8=0.5
-    epot_Li2O = epot_Li2O_cell / 4  # len is 12, we want to get Li2O out of Li8O4, so we divide by 4. 3/12=0.25
+    epot_Li2O2 = epot_Li2O2_cell / 2
+    epot_Li2O = epot_Li2O_cell
     epot_LiO2 = epot_LiO2_cell / 2
 
     print(epot_Li2O)
