@@ -25,12 +25,9 @@ OMP_NUM_THREADS: 1
 Input parameters:
   kpts: {gamma: True,
          size: (5, 5, 7)}
-  mode: {ecut: 540.0,
+  mode: {ecut: 530.0,
          name: pw}
   xc: PBE
 
-Input parameters:
-  setups: {O: :p, -1.05,0}
-
-Memory usage: 108.27 MiB
+Memory usage: 145.96 MiB
 Date: Sat Aug 13 09:26:56 2022
