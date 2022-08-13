@@ -6,9 +6,9 @@
  |___|_|             
 
 User:   gabrielbirnbaum@Gabriels-MacBook-Pro.local
-Date:   Fri Aug 12 20:17:59 2022
+Date:   Sun Aug  7 20:14:07 2022
 Arch:   x86_64
-Pid:    30173
+Pid:    18678
 Python: 3.9.13
 gpaw:   /Users/gabrielbirnbaum/PycharmProjects/nanolithia/venv/lib/python3.9/site-packages/gpaw
 _gpaw:  /Users/gabrielbirnbaum/PycharmProjects/nanolithia/venv/lib/python3.9/site-packages/
@@ -23,11 +23,10 @@ OpenMP: False
 OMP_NUM_THREADS: 1
 
 Input parameters:
-  kpts: {gamma: True,
-         size: (5, 5, 7)}
+  kpts: {size: (5, 5, 7)}
   mode: {ecut: 530.0,
          name: pw}
   xc: PBE
 
-Memory usage: 672.88 MiB
-Date: Fri Aug 12 20:40:04 2022
+Memory usage: 147.95 MiB
+Date: Sun Aug  7 20:14:14 2022

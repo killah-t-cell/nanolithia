@@ -20,10 +20,12 @@ if __name__ == '__main__':
 
     # get compounds
     xc = 'PBE'
-    # TODO add correction to calc
-    Li2O = Compound('Li2O', 'mp-1960', xc, magmoms=[0.6, 0.6, 0.6], converged=True, extension='cif')
-    Li2O2 = Compound('Li2O2', 'mp-841', xc, magmoms=[0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6], converged=True)
-    LiO2 = Compound('LiO2', 'mp-1018789', xc, magmoms=[0.6, 0.6, 0.6, 0.6, 0.6, 0.6], converged=True)
+    #  TODO get right band gap with HSE06 values of the
+    #  Corrections are slightly adapted from A Facile Mechanism for Recharging
+    #  Li2O2 in Li−O2 Batteries paper. The adaptation is to be expected because DFT+U is implementation specific
+    Li2O = Compound('Li2O', 'mp-1960', xc, magmoms=[0.6, 0.6, 0.6], converged=True, extension='cif')  #  setups={'O': ':p, -1.04,0'}
+    Li2O2 = Compound('Li2O2', 'mp-841', xc, magmoms=[0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6], converged=True)  #  setups={'O': ':p, -0.72,0'}
+    LiO2 = Compound('LiO2', 'mp-1018789', xc, magmoms=[0.6, 0.6, 0.6, 0.6, 0.6, 0.6], converged=True) # setups={'O': ':p, -0.24,0'}
     Li = Compound('Li', '1', xc, ecut=530, converged=True)
     O2 = Compound('O2', 'mp-12957', xc, magmoms=[0.6, 0.6, 0.6, 0.6], ecut=530, converged=True)
 
@@ -38,9 +40,9 @@ if __name__ == '__main__':
     epot_Li2O = epot_Li2O_cell
     epot_LiO2 = epot_LiO2_cell / 2
 
-    print(epot_Li2O)
-    print(epot_Li2O2)
-    print(epot_LiO2)
+    print('epot_Li2O', epot_Li2O)
+    print('epot_Li2O2', epot_Li2O2_cell)
+    print('epot_LiO2', epot_LiO2_cell)
 
     # get properties
     vol1 = get_eq_voltage(2 * epot_Li2O, epot_Li2O2, 2)
@@ -54,8 +56,9 @@ if __name__ == '__main__':
 
     # get electronic structure
     for compound in [Li2O, Li2O2, LiO2]:
+        compound.get_bandgap()
         compound.set_pdos()
+        compound.set_ldos()
         compound.set_band_structure(emax=13)
         compound.set_dos()
-        compound.set_ldos()
 

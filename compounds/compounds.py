@@ -1,16 +1,10 @@
 import os
-import pathlib
-import sys
 
-import ase.db
 import numpy as np
 from ase.dft import DOS
 from ase.dft.bandgap import bandgap
-from ase.dft.wannier import Wannier
-from ase.io import read, write
-from gpaw import GPAW, FermiDirac, PW, restart
-from ase.calculators.dftd3 import DFTD3
-from gpaw.utilities.dos import RestartLCAODOS, fold, print_projectors
+from ase.io import read
+from gpaw import GPAW, PW
 from matplotlib import pyplot as plt
 
 from global_vars import ROOT_DIR
@@ -40,7 +34,7 @@ class Compound:
         self.name = f'{formula}-{structure}-{xc}-{ecut:.0f}-{kpts}'
         # load crystal
         self.atoms = read(os.path.join(ROOT_DIR, f'structures/{formula}_{structure}.{extension}'))
-        
+
         if self.magmoms is not None:
             self.atoms.set_initial_magnetic_moments(self.magmoms)
 
@@ -55,8 +49,9 @@ class Compound:
 
         self.atoms.calc = self.calc
 
+    ## --------------- FUNDAMENTAL CALCULATIONS --------------- ##
     def get_energy(self):
-        if os.path.exists(f'{self.name}.gpw'):
+        if os.path.exists(os.path.join(ROOT_DIR, f'calculators/{self.name}.gpw')):
             self.calc = GPAW(os.path.join(ROOT_DIR, f'calculators/{self.name}.gpw'))
             self.ef = self.calc.get_fermi_level()
             self.atoms = self.calc.get_atoms()
@@ -68,6 +63,9 @@ class Compound:
             self.calc.write(os.path.join(ROOT_DIR, f'calculators/{self.name}.gpw'))
 
         return self.pot_energy
+
+    def converge(self):
+        return
 
     ## --------------- ELECTRONIC STRUCTURES --------------- ##
     def get_bandgap(self, direct=False):
