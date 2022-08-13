@@ -7,7 +7,7 @@ LI2O2_ENTROPY = 0.59
 LI2O_ENTROPY = 0.39
 LIO2_ENTROPY = 1.21
 O2_ENERGY = Compound('O2', 'mp-12957', 'PBE', magmoms=[0.6, 0.6, 0.6, 0.6], ecut=530).get_energy() / 2  # or -9.896
-LI_ENERGY = Compound('Li', '1', 'PBE', ecut=530).get_energy() / 4  # or 1.90
+LI_ENERGY = Compound('Li', 'mp-1', 'PBE', ecut=530).get_energy() / 4  # or 1.90
 
 
 def formation_energy(unit_formula_energy, a, b):
