@@ -8,24 +8,6 @@ from properties.profiles import LIO2_ENTROPY, LI2O2_ENTROPY, LI2O_ENTROPY, gibbs
 from properties.voltages import get_eq_voltage
 
 
-# hard coded for now
-def stable_voltage_profile():
-    gibbs_Li2O = -6.156413617038097
-    gibbs_Li2O2 = -6.592095752338368
-    gibbs_LiO2 = -3.2142476183220534
-
-    # get voltage profile
-    v_points = [get_eq_voltage(2 * gibbs_Li2O, gibbs_Li2O2, 2),
-                get_eq_voltage(gibbs_Li2O2, gibbs_LiO2, 1)]
-    concentrations = (0, 2)
-
-    plt.plot(concentrations, v_points)
-    plt.ylabel('Voltage (V)')
-    plt.xlabel('x in Li4-xO2')
-    plt.savefig(f'plots/stable-voltage-profile-0K.png')
-    plt.show()
-
-
 def get_profiles(xc):
     # create supercell
     Li2O_conventional_standard = Compound('Li2O', 'mp-1960_conventional_standard', xc,
@@ -42,7 +24,7 @@ def get_profiles(xc):
                       'compound': Li2O_conventional_standard}]
 
     # get intermediates, their energies, and their formation and gibbs energies.
-    for num_li in range(15, 4, -1):
+    for num_li in range(15, 3, -1):
         # linearly interpolate U and entropy corrections
         inter_U_correction = np.interp(num_li, li_states, U_corrections)
         inter_entropy = np.interp(num_li, li_states, entropies)
@@ -57,7 +39,7 @@ def get_profiles(xc):
                                 extension='.cif')
 
         # get intermediate energies
-        epot_intermediate_cell = intermediate.get_energy()
+        epot_intermediate_cell = intermediate.get_energy()  # TODO why is it not converging?
         intermediate_gibbs = gibbs_energy(epot_intermediate_cell / 8, inter_entropy, num_li / 8, 1)
         intermediate_ef = formation_energy(epot_intermediate_cell / 8, num_li / 8, 1)
         intermediates.append({'name': name, 'num_li': num_li, 'gibbs': intermediate_gibbs,

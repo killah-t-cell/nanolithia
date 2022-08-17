@@ -147,7 +147,7 @@ class Compound:
         self.bs.plot(filename=os.path.join(ROOT_DIR, f'plots/{self.name}-band-structure.png'), show=True, emax=emax)
 
     ## --------------- PHONON CALCULATIONS --------------- ##
-    def get_phonons(self, N=7):
+    def get_phonons(self, N=2):
         # Phonon calculator
         ph = Phonons(self.atoms, self.calc, supercell=(N, N, N), delta=0.05)
         ph.run()

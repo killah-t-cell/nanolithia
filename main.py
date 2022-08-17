@@ -7,7 +7,7 @@ import matplotlib as mpl
 
 from compounds.compounds import Compound
 from global_vars import MOL_MASS_LI2O, MOL_VOL_LI2O, LI2O_CORRECTION, LIO2_CORRECTION, LI2O2_CORRECTION
-from profile import get_profiles, stable_voltage_profile
+from profile import get_profiles
 from properties.densities import get_mass_energy_density, get_volumetric_energy_density, get_specific_capacity
 from properties.profiles import gibbs_energy, LI2O_ENTROPY, LI2O2_ENTROPY, LIO2_ENTROPY, formation_energy
 from properties.voltages import get_eq_voltage
@@ -69,12 +69,10 @@ if __name__ == '__main__':
     print('ef_LiO2', ef_LiO2 / 3)
 
     # get profiles
-    stable_voltage_profile()
     get_profiles(xc)
 
     # get electronic structure
     for compound in [Li2O, Li2O2, LiO2]:
-        compound.get_phonons()
         compound.get_bandgap()
         compound.set_pdos()
         compound.set_ldos()
